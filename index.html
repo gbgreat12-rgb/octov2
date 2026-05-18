@@ -12,22 +12,32 @@
    electric blue accent, warm white text
 ============================================= */
 :root {
-  --charcoal:    #1a1a1a;
-  --charcoal-2:  #252525;
-  --charcoal-3:  #2e2e2e;
+  --charcoal:    #161922;
+  --charcoal-2:  #1f232f;
+  --charcoal-3:  #2a2f3d;
   --ssi-red:     #d42b2b;
   --ssi-red-dk:  #a81f1f;
   --ssi-red-lt:  #f04545;
   --blue-ring:   #1e6cb5;
   --blue-lt:     #3d8fd4;
+  --blue-deep:   #0a3d62;
+  --orange:      #ff7a1a;
+  --orange-lt:   #ffa257;
+  --orange-dk:   #d65a00;
+  --teal:        #00b8a9;
   --sand:        #e8d5b0;
   --white:       #f5f5f5;
-  --muted:       #888;
-  --border:      rgba(255,255,255,0.1);
+  --muted:       #8a8f9c;
+  --border:      rgba(255,255,255,0.08);
   --border-red:  rgba(212,43,43,0.4);
+  --border-or:   rgba(255,122,26,0.4);
   --error:       #ff5252;
   --success:     #4caf50;
   --warning:     #ff9800;
+  --grad-hero:   linear-gradient(135deg, #1e6cb5 0%, #0a3d62 60%, #161922 100%);
+  --grad-orange: linear-gradient(135deg, #ff7a1a 0%, #d65a00 100%);
+  --grad-blue:   linear-gradient(135deg, #3d8fd4 0%, #1e6cb5 100%);
+  --ease:        cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,21 +50,47 @@ body {
   overflow-x: hidden;
 }
 
-/* ---- BACKGROUND TEXTURE ---- */
+/* ---- BACKGROUND TEXTURE (deeper, more colorful) ---- */
 body::before {
   content: '';
   position: fixed; inset: 0;
   background:
-    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(30,108,181,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 30% 25% at 5% 15%,   rgba(212,43,43,0.07)  0%, transparent 60%),
+    radial-gradient(ellipse 80% 55% at 50% 110%, rgba(30,108,181,0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 100% 0%, rgba(255,122,26,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 30% at 0% 20%,   rgba(212,43,43,0.08)  0%, transparent 60%),
+    radial-gradient(ellipse 30% 25% at 90% 80%,  rgba(0,184,169,0.06)  0%, transparent 60%),
     repeating-linear-gradient(
       0deg,
       transparent,
       transparent 59px,
-      rgba(255,255,255,0.018) 60px
+      rgba(255,255,255,0.014) 60px
     );
   pointer-events: none;
   z-index: 0;
+}
+
+/* Floating bubbles for ocean ambiance (very subtle) */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle 1.5px at 12% 80%, rgba(61,143,212,0.4), transparent),
+    radial-gradient(circle 1px   at 88% 60%, rgba(255,255,255,0.25), transparent),
+    radial-gradient(circle 2px   at 25% 30%, rgba(0,184,169,0.3), transparent),
+    radial-gradient(circle 1px   at 70% 90%, rgba(255,162,87,0.3), transparent),
+    radial-gradient(circle 1.5px at 50% 15%, rgba(61,143,212,0.3), transparent);
+  pointer-events: none;
+  z-index: 0;
+  animation: drift 24s linear infinite;
+}
+@keyframes drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-40px); }
+}
+
+/* Global smoother transitions */
+button, input, select, textarea, a {
+  transition: all 0.25s var(--ease);
 }
 
 .wrap {
@@ -138,6 +174,159 @@ body::before {
   gap: 3px;
 }
 
+/* ---- GOOGLE RATING CHIP (header) ---- */
+.google-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 100px;
+  text-decoration: none;
+  font-size: 11px;
+  color: var(--white);
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  width: fit-content;
+}
+.google-rating:hover { background: rgba(255,255,255,0.08); border-color: var(--blue-ring); }
+.google-rating .gr-stars  { color: #ffc107; font-size: 12px; letter-spacing: 1px; }
+.google-rating .gr-score  { font-weight: 700; }
+.google-rating .gr-divider { color: var(--muted); }
+.google-rating .gr-count  { color: var(--muted); }
+.google-rating .gr-g      { font-weight: 700; letter-spacing: -0.5px; margin-right: 2px; }
+.google-rating .gr-g .b   { color: #4285F4; }
+.google-rating .gr-g .r   { color: #EA4335; }
+.google-rating .gr-g .y   { color: #FBBC05; }
+.google-rating .gr-g .g2  { color: #34A853; }
+
+/* ---- REVIEWS SIDE PANEL (desktop only) ---- */
+.reviews-panel {
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 270px;
+  background: var(--charcoal-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--ssi-red);
+  border-radius: 8px;
+  padding: 14px 14px 12px;
+  z-index: 50;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+  font-size: 12.5px;
+  color: var(--white);
+}
+.reviews-panel.collapsed {
+  width: auto;
+  padding: 8px 12px;
+  border-left-width: 3px;
+}
+.reviews-panel.collapsed .rp-stage,
+.reviews-panel.collapsed .rp-dots,
+.reviews-panel.collapsed .rp-footer { display: none; }
+.reviews-panel.collapsed .rp-title { font-size: 11px; }
+
+.rp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.reviews-panel.collapsed .rp-header { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+.rp-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white);
+  display: flex; align-items: center; gap: 6px;
+}
+.rp-title .rp-star { color: #ffc107; }
+
+.rp-collapse {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 22px; height: 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  transition: all 0.2s;
+}
+.rp-collapse:hover { color: var(--white); border-color: var(--blue-ring); }
+
+.rp-stage {
+  position: relative;
+  min-height: 130px;
+}
+.rp-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+}
+.rp-slide.active { opacity: 1; pointer-events: auto; }
+
+.rp-quote {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--white);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+.rp-quote::before { content: '“'; color: var(--ssi-red); font-size: 20px; line-height: 0; vertical-align: -6px; margin-right: 2px; }
+.rp-quote::after  { content: '”'; color: var(--ssi-red); font-size: 20px; line-height: 0; vertical-align: -6px; margin-left: 2px; }
+
+.rp-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.rp-meta .rp-name { color: var(--white); font-weight: 600; }
+.rp-meta .rp-stars { color: #ffc107; letter-spacing: 1px; font-size: 10px; }
+
+.rp-dots {
+  display: flex; justify-content: center; gap: 6px;
+  margin-top: 10px;
+}
+.rp-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.rp-dot.active { background: var(--ssi-red); transform: scale(1.4); }
+
+.rp-footer {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+.rp-footer a { color: var(--blue-lt); text-decoration: none; }
+.rp-footer a:hover { text-decoration: underline; }
+
+@media (max-width: 1180px) {
+  .reviews-panel { display: none; }
+}
+
 .ssi-slash {
   font-family: 'Oswald', sans-serif;
   font-size: 26px;
@@ -178,18 +367,226 @@ body::before {
   cursor: default;
 }
 
-.prog-step.active { color: var(--white);   border-bottom-color: var(--ssi-red); }
-.prog-step.done   { color: var(--blue-lt); border-bottom-color: var(--blue-ring); }
+.prog-step.active {
+  color: var(--white);
+  border-bottom-color: var(--orange);
+  text-shadow: 0 0 12px rgba(255,122,26,0.45);
+}
+.prog-step.done   {
+  color: var(--blue-lt);
+  border-bottom-color: var(--blue-ring);
+}
+.prog-step.done::before {
+  content: '✓ ';
+  color: var(--blue-lt);
+}
 
 /* =============================================
    PAGES
 ============================================= */
 .page { display: none; }
-.page.active { display: block; animation: slideIn 0.35s ease; }
+.page.active { display: block; animation: slideIn 0.55s var(--ease); }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(22px); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 24px rgba(255,122,26,0.25), 0 0 0 1px rgba(255,122,26,0.3); }
+  50%      { box-shadow: 0 0 40px rgba(255,122,26,0.45), 0 0 0 1px rgba(255,122,26,0.5); }
+}
+
+/* ============================================================
+   SPLASH SCREEN — intro choice (DSD vs Certified)
+============================================================ */
+.splash {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 110%, rgba(30,108,181,0.4) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 100% 0%, rgba(255,122,26,0.18) 0%, transparent 60%),
+    var(--charcoal);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  animation: fadeIn 0.6s var(--ease);
+}
+.splash.fading {
+  animation: fadeOut 0.5s var(--ease) forwards;
+}
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+.splash-logo {
+  width: 130px; height: 130px;
+  border-radius: 50%;
+  background: var(--charcoal-3);
+  border: 4px solid var(--blue-ring);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 60px;
+  margin-bottom: 22px;
+  box-shadow: 0 0 60px rgba(30,108,181,0.5), 0 0 0 8px rgba(30,108,181,0.08);
+  animation: scaleIn 0.7s var(--ease);
+}
+.splash-logo img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+.splash-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 6px;
+  text-align: center;
+  animation: scaleIn 0.8s var(--ease);
+}
+.splash-title .red    { color: var(--ssi-red); }
+.splash-title .orange { color: var(--orange); }
+
+.splash-sub {
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-align: center;
+  animation: scaleIn 0.9s var(--ease);
+}
+.splash-welcome {
+  font-size: 15px;
+  color: var(--white);
+  margin: 18px 0 28px;
+  text-align: center;
+  max-width: 480px;
+  line-height: 1.55;
+  opacity: 0.85;
+  animation: fadeIn 1.1s var(--ease);
+}
+
+.splash-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+  max-width: 720px;
+  width: 100%;
+  animation: scaleIn 1s var(--ease);
+}
+
+.choice-card {
+  position: relative;
+  background: var(--charcoal-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 24px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.35s var(--ease);
+  text-align: center;
+}
+.choice-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-grad, var(--grad-orange));
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  z-index: 0;
+}
+.choice-card > * { position: relative; z-index: 1; }
+.choice-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent-col, var(--orange));
+  box-shadow: 0 14px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--accent-col, var(--orange));
+}
+.choice-card:hover::before { opacity: 0.10; }
+.choice-card:active { transform: translateY(-2px); }
+
+.choice-card.intro { --accent-col: var(--orange); --accent-grad: var(--grad-orange); }
+.choice-card.cert  { --accent-col: var(--blue-lt); --accent-grad: var(--grad-blue); }
+
+.choice-icon {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px;
+  margin: 0 auto 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--accent-col, var(--orange));
+  color: var(--accent-col, var(--orange));
+  transition: all 0.35s var(--ease);
+}
+.choice-card:hover .choice-icon {
+  background: var(--accent-grad, var(--grad-orange));
+  color: #fff;
+  transform: scale(1.08) rotate(-6deg);
+}
+
+.choice-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.choice-sub {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.choice-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--white);
+  opacity: 0.8;
+  margin-bottom: 18px;
+}
+.choice-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-col, var(--orange));
+  font-weight: 600;
+}
+.choice-card:hover .choice-cta { color: #fff; }
+
+.splash-footer {
+  margin-top: 32px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  opacity: 0.7;
+}
+.splash-footer .sep { margin: 0 10px; color: var(--orange); }
+
+@media (max-width: 600px) {
+  .splash-choices { grid-template-columns: 1fr; gap: 16px; }
+  .choice-card { padding: 22px 18px; }
+  .splash-logo { width: 100px; height: 100px; font-size: 46px; }
 }
 
 /* ---- SECTION TITLES ---- */
@@ -251,14 +648,14 @@ body::before {
 .field textarea {
   background: var(--charcoal-2);
   border: 1px solid var(--border);
-  border-radius: 5px;
+  border-radius: 8px;
   color: var(--white);
   font-family: 'Source Sans 3', sans-serif;
   font-size: 14px;
-  padding: 10px 13px;
+  padding: 11px 14px;
   outline: none;
   width: 100%;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease);
   -webkit-appearance: none;
 }
 
@@ -267,8 +664,26 @@ body::before {
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: var(--blue-ring);
-  box-shadow: 0 0 0 3px rgba(30,108,181,0.18);
+  border-color: var(--orange);
+  background: rgba(255,122,26,0.04);
+  box-shadow: 0 0 0 3px rgba(255,122,26,0.18), 0 0 18px rgba(255,122,26,0.08);
+}
+
+/* Make dropdown options readable on Windows / all browsers
+   (native <option> rendering ignores parent color rules) */
+.field select option,
+.eq-row select option {
+  background-color: #1f232f;   /* charcoal-2 hex (vars don't apply in native option) */
+  color: #f5f5f5;
+}
+.field select option:disabled {
+  color: #6a6f7a;
+  font-style: italic;
+}
+.field select option:checked,
+.field select option:hover {
+  background-color: #ff7a1a;
+  color: #ffffff;
 }
 
 .field input.invalid, .field select.invalid { border-color: var(--error) !important; }
@@ -396,6 +811,166 @@ body::before {
   display: none;
 }
 .physician-banner strong { color: var(--ssi-red); }
+
+/* ============================================================
+   PHASE 2 — NEW COMPONENTS
+============================================================ */
+
+/* ---- SUB-SECTION HEADING (within a step) ---- */
+.sub-sec {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin: 28px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-or);
+  display: flex; align-items: center; gap: 10px;
+}
+.sub-sec::before {
+  content: '';
+  width: 4px; height: 18px;
+  background: var(--grad-orange);
+  border-radius: 2px;
+}
+
+/* ---- INFO CARD (clean glass-ish panel) ---- */
+.info-card {
+  background: linear-gradient(135deg, rgba(30,108,181,0.05), rgba(255,122,26,0.04));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+/* ---- CONDITIONAL "Yes-triggered" inline fields ---- */
+.conditional {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(255,122,26,0.06);
+  border: 1px dashed var(--border-or);
+  border-radius: 8px;
+  animation: slideIn 0.3s var(--ease);
+}
+.conditional.show { display: block; }
+
+/* ---- EQUIPMENT GRID ---- */
+.eq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.eq-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: var(--charcoal-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.25s var(--ease);
+}
+.eq-row:hover { border-color: var(--orange); }
+.eq-row label {
+  font-size: 13px;
+  color: var(--white);
+  flex: 1;
+  cursor: pointer;
+  user-select: none;
+}
+.eq-row select {
+  background: var(--charcoal-3);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 6px 10px;
+  width: 90px;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23ff7a1a' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  padding-right: 26px;
+  cursor: pointer;
+}
+.eq-row input[type="checkbox"] {
+  width: 18px; height: 18px;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+/* ---- PARTICIPANT SIGNATURE STRIP (per-page sig) ---- */
+.sig-strip {
+  margin-top: 24px;
+  padding: 18px 18px 14px;
+  background: linear-gradient(135deg, rgba(30,108,181,0.08), rgba(255,122,26,0.05));
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--orange);
+  border-radius: 10px;
+}
+.sig-strip-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 8px;
+}
+.sig-strip .stmt {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--white);
+  margin-bottom: 14px;
+  opacity: 0.92;
+}
+
+/* ---- COMPACT YES/NO TOGGLE (for personal info insurance etc) ---- */
+.toggle-yn {
+  display: inline-flex;
+  background: var(--charcoal-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 3px;
+}
+.toggle-yn button {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 18px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.2s var(--ease);
+}
+.toggle-yn button.on-yes { background: var(--grad-orange); color: #fff; box-shadow: 0 2px 10px rgba(255,122,26,0.35); }
+.toggle-yn button.on-no  { background: var(--charcoal-3); color: var(--white); border: 1px solid var(--blue-ring); }
+
+/* ---- WAIVER LONG-TEXT BOX ---- */
+.waiver-text {
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--charcoal-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--white);
+  opacity: 0.92;
+  margin-bottom: 16px;
+}
+.waiver-text p { margin-bottom: 12px; }
+.waiver-text strong { color: var(--orange); }
+.waiver-text::-webkit-scrollbar { width: 8px; }
+.waiver-text::-webkit-scrollbar-track { background: var(--charcoal); }
+.waiver-text::-webkit-scrollbar-thumb { background: var(--orange-dk); border-radius: 4px; }
 
 /* ---- WAIVER BOX ---- */
 .waiver-box {
@@ -540,37 +1115,53 @@ canvas.sig-canvas {
 }
 
 .btn-next {
-  background: var(--ssi-red);
-  color: var(--white);
+  background: var(--grad-orange);
+  color: #fff;
+  border-radius: 8px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 18px rgba(255,122,26,0.3);
 }
 .btn-next::after {
   content: '';
   position: absolute;
-  top: 0; right: 0;
-  width: 0; height: 100%;
-  background: rgba(255,255,255,0.12);
-  transform: skewX(-15deg);
-  transition: width 0.25s;
+  top: 0; left: -80%;
+  width: 60%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s var(--ease);
 }
-.btn-next:hover::after { width: 60px; }
-.btn-next:hover { background: var(--ssi-red-lt); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(212,43,43,0.4); }
+.btn-next:hover::after { left: 130%; }
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(255,122,26,0.5); }
 
 .btn-back {
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--border);
+  border-radius: 8px;
 }
-.btn-back:hover { color: var(--white); border-color: var(--muted); }
+.btn-back:hover { color: var(--white); border-color: var(--orange); transform: translateX(-2px); }
 
 .btn-submit {
-  background: linear-gradient(135deg, var(--ssi-red-dk), var(--ssi-red));
-  color: white;
-  padding: 13px 32px;
+  background: var(--grad-orange);
+  color: #fff;
+  padding: 13px 36px;
   font-size: 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(255,122,26,0.35);
+  position: relative; overflow: hidden;
 }
-.btn-submit:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(212,43,43,0.45); }
+.btn-submit::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -80%;
+  width: 60%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.7s var(--ease);
+}
+.btn-submit:hover::after { left: 130%; }
+.btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(255,122,26,0.55); }
 
 .pg-count {
   font-family: 'Oswald', sans-serif;
@@ -785,7 +1376,6 @@ canvas.sig-canvas {
 
 /* ---- NOTICE BOX ---- */
 .notice {
-.notice {
   background: rgba(30,108,181,0.1);
   border: 1px solid rgba(30,108,181,0.3);
   border-radius: 5px;
@@ -831,20 +1421,21 @@ canvas.sig-canvas {
 }
 
 .box-yn {
-  padding: 4px 14px;
-  border-radius: 4px;
   font-family: 'Oswald', sans-serif;
   font-size: 12px;
-  letter-spacing: 1px;
-  cursor: pointer;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 4px;
   border: 1px solid var(--border);
-  background: var(--charcoal-3);
+  background: transparent;
   color: var(--muted);
+  cursor: pointer;
   transition: all 0.2s;
 }
 .box-yn:hover { border-color: var(--blue-lt); color: var(--white); }
-.box-yn.yes-sel { background: var(--ssi-red); border-color: var(--ssi-red); color: #ffffff; font-weight: 700; }
-.box-yn.no-sel  { background: rgba(30,108,181,0.2);  border-color: var(--blue-ring); color: var(--blue-lt); font-weight: 600; }
+.box-yn.yes-sel { background: var(--ssi-red);    border-color: var(--ssi-red);   color: #ffffff; font-weight: 700; }
+.box-yn.no-sel  { background: var(--charcoal-3); border-color: var(--blue-ring); color: var(--white); font-weight: 600; }
 
 .med-box-title {
   font-family: 'Oswald', sans-serif;
@@ -891,6 +1482,40 @@ canvas.sig-canvas {
   <span class="spin-label">Submitting Registration…</span>
 </div>
 
+<!-- ============================================================
+     SPLASH SCREEN — Welcome / intro choice
+============================================================ -->
+<div class="splash" id="splashScreen">
+  <div class="splash-logo" id="splashLogo">🐙</div>
+  <h1 class="splash-title"><span class="orange">Octopus</span> <span class="red">Divers</span></h1>
+  <div class="splash-sub">SSI Instructor Training Center · Dahab, Egypt</div>
+  <p class="splash-welcome">Welcome aboard. Before we begin your registration, please tell us about your diving background — this helps us tailor your forms.</p>
+
+  <div class="splash-choices">
+
+    <div class="choice-card intro" onclick="startForm('intro')">
+      <div class="choice-icon">🤿</div>
+      <div class="choice-title">First Time</div>
+      <div class="choice-sub">Intro · DSD · Beginner</div>
+      <div class="choice-desc">I've never dived before, or I'm trying a Discover Scuba experience. Take me through the basics.</div>
+      <div class="choice-cta">Start Registration →</div>
+    </div>
+
+    <div class="choice-card cert" onclick="startForm('certified')">
+      <div class="choice-icon">🏊</div>
+      <div class="choice-title">Certified Diver</div>
+      <div class="choice-sub">OW · AOW · Rescue · DM</div>
+      <div class="choice-desc">I'm already a certified diver and ready to go. I'll share my certification and equipment preferences.</div>
+      <div class="choice-cta">Start Registration →</div>
+    </div>
+
+  </div>
+
+  <div class="splash-footer">
+    <span>★ 5.0 on Google</span><span class="sep">·</span><span>391 Reviews</span><span class="sep">·</span><span>SSI Certified</span>
+  </div>
+</div>
+
 <!-- ===================== HEADER ===================== -->
 <div class="site-header">
   <div class="header-inner">
@@ -898,6 +1523,13 @@ canvas.sig-canvas {
     <div class="header-text">
       <h1>Octopus <span>Divers</span></h1>
       <div class="tagline">SSI Instructor Training Center · Dahab, Egypt</div>
+      <a class="google-rating" href="https://www.google.com/search?q=Octopus+Divers+Dahab" target="_blank" rel="noopener" title="See all reviews on Google">
+        <span class="gr-g"><span class="b">G</span><span class="r">o</span><span class="y">o</span><span class="b">g</span><span class="g2">l</span><span class="r">e</span></span>
+        <span class="gr-stars">★★★★★</span>
+        <span class="gr-score">5.0</span>
+        <span class="gr-divider">·</span>
+        <span class="gr-count">391 reviews</span>
+      </a>
     </div>
     <div class="ssi-badge">
       <div class="ssi-slash">SSI/</div>
@@ -905,20 +1537,52 @@ canvas.sig-canvas {
     </div>
   </div>
   <div class="progress-track" id="progressTrack">
-    <div class="prog-step active" id="ps-1">1. Personal</div>
-    <div class="prog-step"        id="ps-2">2. Documents</div>
-    <div class="prog-step"        id="ps-3">3. Dive Info</div>
-    <div class="prog-step"        id="ps-4">4. Medical</div>
-    <div class="prog-step"        id="ps-5">5. Waiver</div>
-    <div class="prog-step"        id="ps-6">6. Signature</div>
+    <div class="prog-step active" id="ps-1">Personal</div>
+    <div class="prog-step"        id="ps-2">Documents</div>
+    <div class="prog-step"        id="ps-3">Cert &amp; Gear</div>
+    <div class="prog-step"        id="ps-4">Medical</div>
+    <div class="prog-step"        id="ps-5">Liability</div>
+    <div class="prog-step"        id="ps-6">Safe Practices</div>
   </div>
 </div>
+
+<!-- ========== GOOGLE REVIEWS — SIDE PANEL (desktop) ========== -->
+<aside class="reviews-panel" id="reviewsPanel" aria-label="Recent Google reviews">
+  <div class="rp-header">
+    <span class="rp-title"><span class="rp-star">★</span> 5.0 on Google · 391</span>
+    <button class="rp-collapse" id="rpCollapse" onclick="toggleReviewsPanel()" title="Hide / show">−</button>
+  </div>
+  <div class="rp-stage" id="rpStage">
+    <div class="rp-slide active">
+      <p class="rp-quote">Bebo was super knowledgeable — did my Open Water with Hamdy, a saint. Perfect English, fully trusted them. Whole place has positive friendly vibes.</p>
+      <div class="rp-meta"><span class="rp-name">Libbi</span><span class="rp-stars">★★★★★</span><span>· 3mo</span></div>
+    </div>
+    <div class="rp-slide">
+      <p class="rp-quote">Completed my Rescue and Divemaster with Octopus — unforgettable. It wasn't just about certifications, it was about becoming part of a real diving family.</p>
+      <div class="rp-meta"><span class="rp-name">Angel</span><span class="rp-stars">★★★★★</span><span>· 6mo</span></div>
+    </div>
+    <div class="rp-slide">
+      <p class="rp-quote">Open Water, Advanced and Nitrox with Medhat and his team. Skilled, kind, attentive, patient — the whole team felt like a big family.</p>
+      <div class="rp-meta"><span class="rp-name">Virginie</span><span class="rp-stars">★★★★★</span><span>· 6mo</span></div>
+    </div>
+    <div class="rp-slide">
+      <p class="rp-quote">The sea is so clear and the marine life spectacular — Manta Rays and barracuda. Instructors patient, helpful, great communicators in all languages.</p>
+      <div class="rp-meta"><span class="rp-name">Jo</span><span class="rp-stars">★★★★★</span><span>· 4mo</span></div>
+    </div>
+    <div class="rp-slide">
+      <p class="rp-quote">Spent several months on fun dives, rescue and divemaster. From day one I felt right at home — safety as a priority, with real positive energy.</p>
+      <div class="rp-meta"><span class="rp-name">Andreas</span><span class="rp-stars">★★★★★</span><span>· 2mo</span></div>
+    </div>
+  </div>
+  <div class="rp-dots" id="rpDots"></div>
+  <div class="rp-footer">From verified <a href="https://www.google.com/search?q=Octopus+Divers+Dahab" target="_blank" rel="noopener">Google reviews →</a></div>
+</aside>
 
 <div class="wrap">
 <div id="formArea">
 
 <!-- ============================================================
-     PAGE 1 — PERSONAL INFO
+     PAGE 1 — PERSONAL INFO + BOOKING + EMERGENCY
 ============================================================ -->
 <div class="page active" id="page-1">
   <div class="sec-title">Personal Information</div>
@@ -928,22 +1592,104 @@ canvas.sig-canvas {
     <div class="field"><label>First Name <span class="req">*</span></label><input type="text" id="firstName" placeholder="As on ID"></div>
     <div class="field"><label>Last Name <span class="req">*</span></label><input type="text" id="lastName" placeholder="As on ID"></div>
   </div>
+
   <div class="fg fg-2">
-    <div class="field"><label>Nationality <span class="req">*</span></label><input type="text" id="nationality" placeholder="e.g. Egyptian"></div>
-    <div class="field"><label>ID / Passport # <span class="req">*</span></label><input type="text" id="passportNum" placeholder="Document number"></div>
-  </div>
-  <div class="fg fg-2">
-    <div class="field"><label>Email Address <span class="req">*</span></label><input type="email" id="email" placeholder="your@email.com"></div>
-    <div class="field"><label>Mobile # <span class="req">*</span></label><input type="tel" id="mobile" placeholder="+20 ..."></div>
-  </div>
-  <div class="fg fg-2">
+    <div class="field">
+      <label>Gender <span class="req">*</span></label>
+      <select id="gender">
+        <option value="" disabled selected>-- Select --</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+        <option>Prefer not to say</option>
+      </select>
+    </div>
     <div class="field"><label>Date of Birth <span class="req">*</span></label><input type="date" id="birthDate"></div>
-    <div class="field"><label>Hotel / Accommodation <span class="req">*</span></label><input type="text" id="hotel" placeholder="Hotel name"></div>
   </div>
-  <div class="fg fg-3">
+
+  <div class="fg fg-2">
+    <div class="field"><label>Passport No. <span class="req">*</span></label><input type="text" id="passportNum" placeholder="Document number"></div>
+    <div class="field"><label>Nationality <span class="req">*</span></label><select id="nationality"><option value="" disabled selected>-- Select --</option></select></div>
+  </div>
+
+  <div class="field" style="margin-bottom:14px;">
+    <label>Home Address <span class="req">*</span></label>
+    <input type="text" id="homeAddress" placeholder="Street, building, apartment">
+  </div>
+
+  <div class="fg fg-2">
+    <div class="field"><label>Country <span class="req">*</span></label><select id="country"><option value="" disabled selected>-- Select --</option></select></div>
+    <div class="field"><label>City <span class="req">*</span></label><input type="text" id="city" placeholder="e.g. Cairo"></div>
+  </div>
+
+  <div class="fg fg-2">
+    <div class="field"><label>Phone No. <span class="req">*</span></label><input type="tel" id="mobile" placeholder="+20 ..."></div>
+    <div class="field"><label>E-mail Address <span class="req">*</span></label><input type="email" id="email" placeholder="your@email.com"></div>
+  </div>
+
+  <div class="fg fg-2">
+    <div class="field">
+      <label>Language <span class="req">*</span></label>
+      <select id="language">
+        <option value="" disabled selected>-- Select --</option>
+        <option>English</option><option>Arabic</option><option>German</option>
+        <option>French</option><option>Italian</option><option>Russian</option>
+        <option>Spanish</option><option>Hebrew</option><option>Polish</option>
+        <option>Czech</option><option>Dutch</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>How did you discover Octopus Divers? <span class="req">*</span></label>
+      <select id="discoveredVia">
+        <option value="" disabled selected>-- Select --</option>
+        <option>Google</option><option>Instagram</option><option>Facebook</option>
+        <option>TripAdvisor</option><option>Friend / Recommendation</option>
+        <option>Hotel / Tour operator</option><option>Walk-in</option>
+        <option>Returning customer</option><option>Other</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="fg fg-2">
+    <div class="field">
+      <label>Diving Insurance? <span class="req">*</span></label>
+      <div class="radio-row" style="margin-top:4px;">
+        <label class="r-item"><input type="radio" name="insurance" value="Yes" onchange="toggleInsurance()"><div class="r-dot"></div>Yes</label>
+        <label class="r-item"><input type="radio" name="insurance" value="No"  onchange="toggleInsurance()"><div class="r-dot"></div>No</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Valid Diving Medical Certificate? <span class="req">*</span></label>
+      <div class="radio-row" style="margin-top:4px;">
+        <label class="r-item"><input type="radio" name="medCertificate" value="Yes" onchange="onMedCertChange()"><div class="r-dot"></div>Yes</label>
+        <label class="r-item"><input type="radio" name="medCertificate" value="No"  onchange="onMedCertChange()"><div class="r-dot"></div>No</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="conditional" id="insuranceDetailsWrap">
+    <label style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--orange);">Association &amp; Policy Number</label>
+    <input type="text" id="insuranceDetails" placeholder="e.g. DAN, policy #1234567" style="margin-top:6px;">
+  </div>
+
+  <div class="field conditional" id="medCertDateWrap" style="margin-top:12px;">
+    <label>Date of Certificate Issue <span class="req">*</span></label>
+    <input type="date" id="medCertDate" onchange="checkMedCertExpiry()">
+  </div>
+  <div class="med-flag-box" id="medCertWarning" style="display:none;">
+    ⚠ <strong>Your medical certificate may have expired.</strong> A physician evaluation will be required on site.
+  </div>
+
+  <!-- ── BOOKING DETAILS ── -->
+  <div class="sub-sec">Details About Your Booking</div>
+
+  <div class="fg fg-2">
+    <div class="field"><label>Arrival Date <span class="req">*</span></label><input type="date" id="hotelCheckIn"></div>
+    <div class="field"><label>Departure Date <span class="req">*</span></label><input type="date" id="hotelCheckOut"></div>
+  </div>
+  <div class="fg fg-2">
+    <div class="field"><label>Hotel <span class="req">*</span></label><input type="text" id="hotel" placeholder="Hotel name"></div>
     <div class="field"><label>Room # <span class="req">*</span></label><input type="text" id="roomNum" placeholder="Room"></div>
-    <div class="field"><label>Hotel Check In <span class="req">*</span></label><input type="date" id="hotelCheckIn"></div>
-    <div class="field"><label>Hotel Check Out <span class="req">*</span></label><input type="date" id="hotelCheckOut"></div>
   </div>
   <div class="fg fg-3">
     <div class="field"><label>Dive Center Check In</label><input type="date" id="diveCheckIn"></div>
@@ -951,15 +1697,20 @@ canvas.sig-canvas {
     <div class="field"><label>Fly Back Date</label><input type="date" id="flyBack"><span style="font-size:11px;color:var(--muted);margin-top:3px;">Leave blank if no flight</span></div>
   </div>
 
-  <div class="divider"></div>
+  <!-- ── EMERGENCY CONTACT ── -->
+  <div class="sub-sec">Emergency Contact</div>
 
   <div class="fg fg-2">
-    <div class="field"><label>Emergency Contact Name <span class="req">*</span></label><input type="text" id="emergName" placeholder="Full name"></div>
-    <div class="field"><label>Emergency Contact Phone <span class="req">*</span></label><input type="tel" id="emergPhone" placeholder="+..."></div>
+    <div class="field"><label>First Name <span class="req">*</span></label><input type="text" id="emergFirstName" placeholder="First name"></div>
+    <div class="field"><label>Last Name <span class="req">*</span></label><input type="text" id="emergLastName" placeholder="Last name"></div>
+  </div>
+  <div class="fg fg-2">
+    <div class="field"><label>Relationship <span class="req">*</span></label><input type="text" id="emergRelationship" placeholder="e.g. Spouse, Parent"></div>
+    <div class="field"><label>Phone No. <span class="req">*</span></label><input type="tel" id="emergPhone" placeholder="+..."></div>
   </div>
 
   <div class="nav-row">
-    <span class="pg-count">Step 1 of 6</span>
+    <span class="pg-count">Step 1</span>
     <button class="btn btn-next" onclick="goNext(1)">Continue →</button>
   </div>
 </div>
@@ -984,9 +1735,9 @@ canvas.sig-canvas {
     </div>
   </div>
 
-  <div class="fg fg-1">
+  <div class="fg fg-1" id="licCopyWrap" style="display:none;">
     <div class="field">
-      <label>Diving License Copy <span style="color:var(--muted);font-size:10px;letter-spacing:0;">(certified divers only)</span></label>
+      <label>Diving License / Certification Copy <span class="req">*</span></label>
       <div class="upload-area" id="licArea">
         <input type="file" id="licFile" accept="image/*,.pdf" onchange="handleFile('licArea','licFile','licFN')">
         <div class="ux">📋</div>
@@ -998,29 +1749,42 @@ canvas.sig-canvas {
   </div>
 
   <div class="nav-row">
-    <button class="btn btn-back" onclick="goPage(1)">← Back</button>
-    <span class="pg-count">Step 2 of 6</span>
+    <button class="btn btn-back" onclick="goBack(2)">← Back</button>
+    <span class="pg-count">Step 2</span>
     <button class="btn btn-next" onclick="goNext(2)">Continue →</button>
   </div>
 </div>
 
 <!-- ============================================================
-     PAGE 3 — DIVING INFO
+     PAGE 3 — CERTIFICATE & EQUIPMENT (CERTIFIED ONLY)
 ============================================================ -->
 <div class="page" id="page-3">
-  <div class="sec-title">Diving Information</div>
-  <div class="sec-sub">Tell us about your diving qualifications 🤿</div>
+  <div class="sec-title">Certificate &amp; Equipment</div>
+  <div class="sec-sub">Tell us about your diving certification and equipment preferences</div>
+
+  <div class="sub-sec">Certificate</div>
+
+  <div class="field" style="margin-bottom:14px;">
+    <label class="cb-item" style="display:inline-flex;cursor:pointer;align-items:center;gap:10px;">
+      <input type="checkbox" id="owInProgress"><div class="cb-box"></div>
+      <span class="cb-label">OW student in progress</span>
+    </label>
+  </div>
 
   <div class="fg fg-2">
     <div class="field">
-      <label>Diving License Number <span class="req">*</span></label>
-      <input type="text" id="licNum" placeholder="Write 0000 for non-divers">
+      <label>Association <span class="req">*</span></label>
+      <select id="diveOrg">
+        <option value="" disabled selected>-- Select --</option>
+        <option>PADI</option><option>SSI</option><option>CMAS</option>
+        <option>NAUI</option><option>BSAC</option><option>SDI/TDI</option>
+        <option>GUE</option><option>Other</option>
+      </select>
     </div>
     <div class="field">
-      <label>Certificate Level <span class="req">*</span></label>
+      <label>Level <span class="req">*</span></label>
       <select id="certLevel">
-        <option value="" disabled selected>Select level</option>
-        <option>Non-diver / Beginner</option>
+        <option value="" disabled selected>-- Select --</option>
         <option>Open Water Diver</option>
         <option>Advanced Open Water</option>
         <option>Rescue Diver</option>
@@ -1030,40 +1794,22 @@ canvas.sig-canvas {
       </select>
     </div>
   </div>
+
   <div class="fg fg-2">
-    <div class="field">
-      <label>Total Logged Dives <span class="req">*</span></label>
-      <input type="number" id="loggedDives" placeholder="000 for non-divers" min="0">
-    </div>
-    <div class="field">
-      <label>Date of Last Dive <span class="req">*</span></label>
-      <input type="date" id="lastDive">
-    </div>
+    <div class="field"><label>Certificate Number <span class="req">*</span></label><input type="text" id="licNum" placeholder="License # / Cert #"></div>
+    <div class="field"><label>Number of Logged Dives <span class="req">*</span></label><input type="number" id="loggedDives" placeholder="0" min="0"></div>
   </div>
   <div class="fg fg-2">
+    <div class="field"><label>Date of the Last Logged Dive <span class="req">*</span></label><input type="date" id="lastDive"></div>
     <div class="field">
-      <label>Training Organization <span class="req">*</span></label>
-      <select id="diveOrg">
-        <option value="" disabled selected>Select org</option>
-        <option>PADI</option>
-        <option>SSI</option>
-        <option>CMAS</option>
-        <option>NAUI</option>
-        <option>BSAC</option>
-        <option>SDI/TDI</option>
-        <option>GUE</option>
-        <option>Other</option>
-        <option>N/A (Non-diver)</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Active Diving Insurance? <span class="req">*</span></label>
+      <label>Check Dive Required? <span class="req">*</span></label>
       <div class="radio-row" style="margin-top:4px;">
-        <label class="r-item"><input type="radio" name="insurance" value="Yes"><div class="r-dot"></div>Yes</label>
-        <label class="r-item"><input type="radio" name="insurance" value="No"><div class="r-dot"></div>No</label>
+        <label class="r-item"><input type="radio" name="checkdive" value="Yes"><div class="r-dot"></div>Yes</label>
+        <label class="r-item"><input type="radio" name="checkdive" value="No"><div class="r-dot"></div>No</label>
       </div>
     </div>
   </div>
+
   <div class="field" style="margin-bottom:16px;">
     <label>Diving Specialties</label>
     <div class="cb-group" style="margin-top:8px;">
@@ -1074,19 +1820,56 @@ canvas.sig-canvas {
     <input type="text" id="specOtherText" placeholder="Please specify…" style="display:none;margin-top:10px;">
   </div>
 
+  <div class="sub-sec">Equipment</div>
+
+  <div class="field" style="margin-bottom:14px;">
+    <label class="cb-item" style="display:inline-flex;cursor:pointer;align-items:center;gap:10px;">
+      <input type="checkbox" id="privateEquipment"><div class="cb-box"></div>
+      <span class="cb-label">Private Equipment (I bring my own)</span>
+    </label>
+  </div>
+
   <div class="fg fg-2">
     <div class="field">
-      <label>Check Dive Required? <span class="req">*</span></label>
-      <div class="radio-row" style="margin-top:4px;">
-        <label class="r-item"><input type="radio" name="checkdive" value="Yes"><div class="r-dot"></div>Yes</label>
-        <label class="r-item"><input type="radio" name="checkdive" value="No"><div class="r-dot"></div>No</label>
+      <label>Diving With <span class="req">*</span></label>
+      <select id="divingWith">
+        <option value="" disabled selected>-- Select --</option>
+        <option>Boat</option><option>Shore</option><option>Both</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;">Choose Equipment</div>
+    <div class="eq-grid">
+      <div class="eq-row">
+        <label for="eqWetsuitLong">Wetsuit long</label>
+        <select id="eqWetsuitLong"><option value="">--</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
       </div>
+      <div class="eq-row">
+        <label for="eqWetsuitShort">Wetsuit short</label>
+        <select id="eqWetsuitShort"><option value="">--</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+      </div>
+      <div class="eq-row">
+        <label for="eqBcd">BCD</label>
+        <select id="eqBcd"><option value="">--</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+      </div>
+      <div class="eq-row">
+        <label for="eqFins">Fins (EU)</label>
+        <select id="eqFins"><option value="">--</option><option>36-37</option><option>38-39</option><option>40-41</option><option>42-43</option><option>44-45</option><option>46-47</option></select>
+      </div>
+      <div class="eq-row"><label for="eqRegulator">Regulator</label><input type="checkbox" id="eqRegulator"></div>
+      <div class="eq-row"><label for="eqMask">Mask</label><input type="checkbox" id="eqMask"></div>
+      <div class="eq-row"><label for="eqComputer">Dive computer</label><input type="checkbox" id="eqComputer"></div>
+      <div class="eq-row"><label for="eqSnorkel">Snorkel</label><input type="checkbox" id="eqSnorkel"></div>
+      <div class="eq-row"><label for="eqTank15">Tank 15L (optional)</label><input type="checkbox" id="eqTank15"></div>
+      <div class="eq-row"><label for="eqTorch">Torch (optional)</label><input type="checkbox" id="eqTorch"></div>
     </div>
   </div>
 
   <div class="nav-row">
-    <button class="btn btn-back" onclick="goPage(2)">← Back</button>
-    <span class="pg-count">Step 3 of 6</span>
+    <button class="btn btn-back" onclick="goBack(3)">← Back</button>
+    <span class="pg-count">Step 3</span>
     <button class="btn btn-next" onclick="goNext(3)">Continue →</button>
   </div>
 </div>
@@ -1095,11 +1878,14 @@ canvas.sig-canvas {
      PAGE 4 — DIVER MEDICAL QUESTIONNAIRE
 ============================================================ -->
 <div class="page" id="page-4">
-  <div class="sec-title">Diver Medical Questionnaire</div>
-  <div class="sec-sub">Complete this as a prerequisite for recreational scuba diving or freediving. Answer all questions honestly.</div>
+  <div class="sec-title">Medical Statement</div>
+  <div class="sec-sub">Diver Medical Participant Questionnaire</div>
 
-  <div class="notice">
-    <strong>Important:</strong> If you answered YES to questions 3, 5, or 10, OR to any question on the following screen, you must take all three pages of this form to your physician for medical evaluation before diving. <strong>If you are pregnant, do not dive.</strong>
+  <div class="waiver-text" style="max-height:240px;">
+    <p>Recreational scuba diving and freediving requires good physical and mental health. There are a few medical conditions which can be hazardous while diving, listed below. Those who have, or are predisposed to, any of these conditions, should be evaluated by a physician. This Diver Medical Participant Questionnaire provides a basis to determine if you should seek out that evaluation. If you have any concerns about your diving fitness not represented on this form, consult with your physician before diving.</p>
+    <p>If you are feeling ill, avoid diving. If you think you may have a contagious disease, protect yourself and others by not participating in dive training and/or dive activities. References to <em>"diving"</em> on this form encompass both recreational scuba diving and freediving. This form is principally designed as an initial medical screen for new divers, but is also appropriate for divers taking continuing education. <strong>For your safety, and that of others who may dive with you, answer all questions honestly.</strong></p>
+    <p style="background:rgba(212,43,43,0.12);border:1px solid var(--border-red);padding:10px;border-radius:5px;">Complete this questionnaire as a prerequisite to a recreational scuba diving or freediving course.<br><strong>Note to women:</strong> If you are pregnant, or attempting to become pregnant, do not dive.</p>
+    <p style="font-size:11px;color:var(--muted);">Questions marked <strong style="color:var(--ssi-red);">(*)</strong> = a medical certificate is required for that YES answer.</p>
   </div>
 
   <!-- Q1–Q10 -->
@@ -1221,6 +2007,10 @@ canvas.sig-canvas {
       <button class="yn-btn" onclick="setMedQ(10,'Yes')">Yes</button>
     </div>
     <div class="med-flag-box" id="flag10" style="background:rgba(212,43,43,0.18);">⚠ <strong>Physician evaluation required</strong> if you answered YES to this question.</div>
+    <div class="field" id="medicationListWrap" style="display:none;margin-top:10px;">
+      <label>Please list your medication(s) <span class="req">*</span></label>
+      <input type="text" id="medicationList" placeholder="e.g. Metformin, Lisinopril">
+    </div>
   </div>
 
   <div class="physician-banner" id="physicianBanner">
@@ -1301,20 +2091,46 @@ canvas.sig-canvas {
     </div>
   </div>
 
+  <!-- ── PARTICIPANT STATEMENT + SIGNATURE ── -->
+  <div class="sig-strip">
+    <div class="sig-strip-title">Participant Statement</div>
+    <p class="stmt">I have answered all questions honestly, and understand that I accept responsibility for any consequences resulting from any questions I may have answered inaccurately or for my failure to disclose any existing or past health conditions.</p>
+
+    <div class="fg fg-2" style="margin-bottom:10px;">
+      <div class="field"><label>Participant Name <span class="req">*</span></label><input type="text" id="medSignerName" placeholder="Your full name"></div>
+      <div class="field"><label>Date <span class="req">*</span></label><input type="date" id="medSigDate"></div>
+    </div>
+    <div class="fg fg-2" style="margin-bottom:14px;">
+      <div class="field"><label>Date of Birth</label><input type="date" id="medSignerDob" disabled></div>
+      <div class="field"><label>Facility Name</label><input type="text" value="OCTOPUS DIVERS DAHAB" disabled></div>
+    </div>
+
+    <div class="sig-wrap">
+      <div class="sig-hdr">
+        <span class="sig-hdr-label">Participant Signature</span>
+        <button class="sig-clear" onclick="clearSig('sigCanvas2','hasSig2')">✕ Clear</button>
+      </div>
+      <canvas class="sig-canvas" id="sigCanvas2"></canvas>
+    </div>
+    <p class="sig-hint">Sign here to confirm the participant statement above.</p>
+  </div>
+
   <div class="nav-row">
-    <button class="btn btn-back" onclick="goPage(3)">← Back</button>
-    <span class="pg-count">Step 4 of 6</span>
+    <button class="btn btn-back" onclick="goBack(4)">← Back</button>
+    <span class="pg-count">Step 4</span>
     <button class="btn btn-next" onclick="goNext(4)">Continue →</button>
   </div>
 </div>
 
 <!-- ============================================================
-     PAGE 5 — WAIVER & REGULATIONS
+     PAGE 5 — LIABILITY RELEASE (BOTH)
 ============================================================ -->
 <div class="page" id="page-5">
-  <div class="sec-title">Diving Center General Regulations</div>
-  <div class="sec-sub">Read carefully — your signature confirms acceptance of all rules below</div>
+  <div class="sec-title">Liability Release</div>
+  <div class="sec-sub">Please read carefully before signing</div>
 
+  <!-- ── CENTER REGULATIONS (kept for both) ── -->
+  <div class="sub-sec">Diving Center General Regulations</div>
   <div class="reg-rules">
     <h4>Octopus Divers — Center Rules</h4>
     <ul>
@@ -1327,112 +2143,158 @@ canvas.sig-canvas {
       <li>There is <strong>no refund</strong> for unused equipment or services in case of cancellation after 19:00 the day before the activity. A refund of <strong>80%</strong> applies for cancellations before that time.</li>
       <li>All equipment must be rinsed in fresh water and hung to dry using provided hangers, and stored in the provided locker by 19:00.</li>
       <li>An extra charge of <strong>$10 USD</strong> will be applied in case of rinsing the regulator with the dust cap off, or returning tanks with pressure less than 40 BAR.</li>
+      <li>Every diver diving independently with a buddy team must carry a personal signal buoy (<strong>SMB</strong>). When diving with a guide, the guide carries the buoy. Signal buoys are available for rent at the center.</li>
       <li>Our Guides / guests usually take pictures and post on Social Media — please let us know in advance if you prefer otherwise.</li>
     </ul>
   </div>
 
-  <div class="sec-title" style="margin-top:24px;">Liability Release & Assumption of Risk</div>
-
-  <div class="waiver-box">
-    <p>I hereby affirm that I am aware that snorkeling and scuba diving have inherent risks which may result in serious injury or death. I understand that diving with compressed air involves certain inherent risks; including but not limited to decompression sickness, embolism or other hyperbaric/air expansion injury that require treatment in a recompression chamber.</p>
-    <p>I further understand that the open water diving trips which are necessary for training and for certification may be conducted at a site that is remote, either by time or distance or both, from such a recompression chamber. I still choose to proceed with such instructional dives in spite of the possible absence of a recompression chamber in proximity to the dive site.</p>
-    <p>I understand and agree that neither my instructor(s) and the facility through which I receive my instruction <strong>Octopus Divers</strong> may be held liable or responsible in any way for any injury, death or other damages to me, my family, estate, heirs or assigns that may occur as a result of my participation in this diving program or as a result of the negligence of any party, including the Released Parties, whether passive or active.</p>
-    <p>In consideration of being allowed to participate in this course (and optional Adventure Dive), I hereby personally assume all risks of this program, whether foreseen or unforeseen, that may befall me while I am a participant including, but not limited to, the academics, confined water and/or open water activities. I further release, exempt and hold harmless said program and Released Parties from any claim or lawsuit by me, my family, estate, heirs or assigns, arising out of my enrollment and participation in this program.</p>
-    <p>I also understand that skin diving and scuba diving are physically strenuous activities and that I will be exerting myself during this program, and that if I am injured as a result of heart attack, panic, hyperventilation, drowning or any other cause, that I expressly assume the risk of said injuries and that I will not hold the Released Parties responsible for the same.</p>
-    <p>I further state that I am of lawful age and legally competent to sign this liability release, or that I have acquired the written consent of my parent or guardian. I understand the terms herein are contractual and not a mere recital, and I have signed this Agreement of my own free act and with the knowledge that I hereby agree to waive my legal rights.</p>
-    <p><strong>BY THIS INSTRUMENT I AGREE TO EXEMPT AND RELEASE MY INSTRUCTORS, AND OCTOPUS DIVERS, AND ALL RELATED ENTITIES AS DEFINED ABOVE, FROM ALL LIABILITY OR RESPONSIBILITY WHATSOEVER FOR PERSONAL INJURY, PROPERTY DAMAGE OR WRONGFUL DEATH HOWEVER CAUSED, INCLUDING, BUT NOT LIMITED TO, THE NEGLIGENCE OF THE RELEASED PARTIES, WHETHER PASSIVE OR ACTIVE.</strong></p>
+  <!-- ── LIABILITY TEXT — INTRO / FIRST-TIMER VARIANT ── -->
+  <div id="liabilityTextIntro">
+    <div class="sub-sec">Liability Release &amp; Assumption of Risk Agreement</div>
+    <div class="waiver-text">
+      <p>(Form not to be used within the European Union and various other countries depending on local laws/regulations — The Training Center and the Professionals are responsible to know and adhere to laws/local regulations.) This is a legal contract terminating your rights to file a lawsuit. Read carefully before signing.</p>
+      <p><strong>Warning — Scuba diving uses life-support equipment and techniques that have inherent risks which may cause serious injury, illness or death.</strong></p>
+      <p>In consideration of being allowed to participate in scuba training, I expressly agree to be bound by this Agreement and comply with the SSI Responsible Scuba Diver Code. I understand this Agreement is between me, my family, estate, heirs and or anyone who may have a claim on my behalf; and <strong>Octopus Divers</strong>, including all instructors, facilities, boats, and training sites I receive training with or at; Scuba Schools International ("SSI"); and each of their respective owners, officers, employees, representatives, volunteers, agents, contractors and any others on their behalves, whether specifically named or not (herein referred to as "Released Parties").</p>
+      <p>I voluntarily assume all risks of injury, illness and death, caused by scuba diving and all related activities, whether foreseeable or not, including but not limited to risks associated with: swimming, entering and exiting the water, falling on, struck by or abandoned by a boat, separation or lost underwater, holding my breath, pre-existing health conditions, heart failure, over-exertion, panic, drowning, pressure related injuries, decompression illness, environmental and marine life injuries, unknown causes, equipment malfunctions, improper dive planning, or improper action of other divers or support personnel (including failure to rescue, recover, resuscitate, or provide emergency assistance).</p>
+      <p>I agree to waive, release, not sue, discharge, save, indemnify, and hold harmless the Released Parties of all claims, demands, causes of action, lawsuits and damages by me, my estate, family (including minor children), heirs, or others who may have a claim for my injury, illness or death as a result of any act or failure to act, including negligence by the Released Parties, associated with my scuba training and all related activities.</p>
+      <p>I have carefully read, understand and agree to comply with the SSI Responsible Scuba Diver Code during all diving activities. I am responsible for being physically, medically and mentally fit to participate in scuba diving. I affirm that all personal information I have provided on medical questionnaires is truthful and accurate to the best of my knowledge.</p>
+      <p>I am over 18 years of age and legally competent to engage in this Agreement, or I have acquired the written consent of my parent or guardian by completing a Youth Addendum form.</p>
+    </div>
   </div>
 
-  <div class="sec-title" style="margin-top:24px;">Standard Safe Diving Practices</div>
-
-  <div class="waiver-box">
-    <h4>Statement of Understanding</h4>
-    <p>This is a statement in which you are informed of the established safe diving practices for skin and scuba diving. These practices have been compiled for your review and acknowledgement and are intended to increase your comfort and safety in diving.</p>
-    <p><strong>As a diver I should:</strong></p>
-    <p>1. Maintain good mental and physical fitness for diving. Avoid being under the influence of alcohol or dangerous drugs when diving. Keep proficient in diving skills, striving to increase them through continuing education, and refer to course materials to stay current after a period of diving inactivity.</p>
-    <p>2. Be familiar with my dive sites. If conditions are worse than those I am experienced in, postpone diving or select an alternate site with better conditions. Do not engage in cave or technical diving unless specifically trained to do so.</p>
-    <p>3. Use complete, well-maintained, reliable equipment with which I am familiar; inspect it for correct fit and function prior to each dive. Have a BCD, low-pressure BCD inflation system, submersible pressure gauge and alternate air source and dive planning/monitoring device. Deny use of my equipment to uncertified divers.</p>
-    <p>4. Listen carefully to dive briefings and directions and respect the advice of those supervising my diving activities. Recognize that additional training is recommended for specialty diving activities, in other geographic areas and after periods of inactivity that exceed six months.</p>
-    <p>5. Adhere to the buddy system throughout every dive. Plan dives — including communications, procedures for reuniting in case of separation and emergency procedures — with my buddy.</p>
-    <p>6. Be proficient in dive planning. Make all dives no decompression dives and allow a margin of safety. Have a means to monitor depth and time underwater. Limit maximum depth to my level of training and experience. Ascend at a rate of not more than 18 metres/60 feet per minute. Be a SAFE diver — Slowly Ascend From Every dive. Make a safety stop as an added precaution, usually at 5 metres/15 feet for three minutes or longer.</p>
-    <p>7. Maintain proper buoyancy. Adjust weighting at the surface for neutral buoyancy with no air in my BCD. Maintain neutral buoyancy while underwater. Be buoyant for surface swimming and resting. Have weights clear for easy removal, and establish buoyancy when in distress while diving. Carry at least one surface signaling device (such as signal tube, whistle, mirror).</p>
-    <p>8. Breathe properly for diving. Never breath-hold or skip-breathe when breathing compressed air, and avoid excessive hyperventilation when breath-hold diving. Avoid overexertion while in and underwater and dive within my limitations.</p>
-    <p>9. Use a boat, float or other surface support station, whenever feasible.</p>
-    <p>10. Know and obey local dive laws and regulations, including fish and game and dive flag laws.</p>
-    <p><strong>I UNDERSTAND THE IMPORTANCE AND PURPOSES OF THESE ESTABLISHED PRACTICES. I RECOGNIZE THEY ARE FOR MY OWN SAFETY AND WELL-BEING, AND THAT FAILURE TO ADHERE TO THEM CAN PLACE ME IN JEOPARDY WHEN DIVING.</strong></p>
+  <!-- ── LIABILITY TEXT — CERTIFIED VARIANT ── -->
+  <div id="liabilityTextCertified" style="display:none;">
+    <div class="sub-sec">SSI Recreational Scuba Training — Assumption of Risk, Liability Release &amp; Hold Harmless</div>
+    <div class="waiver-text">
+      <p>(Form not to be used within the European Union and various other countries depending on local laws/regulations — The Training Center and the Professionals are responsible to know and adhere to laws/local regulations.) This is a legal contract terminating your rights to file a lawsuit. Read carefully before signing.</p>
+      <p><strong>Warning — Scuba diving uses life-support equipment and techniques that have inherent risks which may cause serious injury, illness or death.</strong></p>
+      <p>In consideration of being allowed to participate in scuba training, I expressly agree to be bound by this Agreement and comply with the SSI Responsible Scuba Diver Code. I understand this Agreement is between me, my family, estate, heirs and or anyone who may have a claim on my behalf; and <strong>Octopus Divers</strong>, including all instructors, facilities, boats, and training sites I receive training with or at; Scuba Schools International ("SSI"); and each of their respective owners, officers, employees, representatives, volunteers, agents, contractors and any others on their behalves, whether specifically named or not (herein referred to as "Released Parties").</p>
+      <p>I voluntarily assume all risks of injury, illness and death, caused by scuba diving and all related activities, whether foreseeable or not, including but not limited to risks associated with: swimming, entering and exiting the water, falling on, struck by or abandoned by a boat, separation or lost underwater, holding my breath, pre-existing health conditions, heart failure, over-exertion, panic, drowning, pressure related injuries, decompression illness, environmental and marine life injuries, unknown causes, equipment malfunctions, improper dive planning, or improper action of other divers or support personnel.</p>
+      <p>I agree to waive, release, not sue, discharge, save, indemnify, and hold harmless the Released Parties of all claims, demands, causes of action, lawsuits and damages by me, my estate, family (including minor children), heirs, or others who may have a claim for my injury, illness or death as a result of any act or failure to act, including negligence by the Released Parties, associated with my scuba training and all related activities. I agree that it is my responsibility to inform my family and all those who may have legal rights on my behalf that I have entered into this Agreement and it is my intent that they be bound by this Agreement.</p>
+      <p>I have carefully read, understand and agree to comply with the SSI Responsible Scuba Diver Code during all diving activities. I am responsible for my own safety and well-being during all dive training and related activities. I am responsible for being physically, medically and mentally fit to participate in scuba diving. I affirm that all personal information I have provided on medical questionnaires is truthful and accurate. I am responsible for my own equipment configuration, assembly, and pre-dive inspection. I am responsible for planning and performing all my dive activities, including anticipating potential emergencies.</p>
+      <p>I understand and agree that SSI licenses training centers, professionals and their affiliates to use various SSI trademarks and to conduct SSI approved training, but they are not agents, employees or franchisees of SSI. SSI training centers, SSI professionals, and their affiliates' businesses are independent, and are neither owned, operated, or controlled by SSI. I shall not hold SSI liable for the actions, inactions or negligence of the SSI training center, SSI professionals and other affiliated businesses or personnel associated with my dive activities.</p>
+      <p>I expressly understand my responsibilities and that I am giving up legal rights by signing this Agreement. This is an unconditional and complete release of all liability to the greatest extent allowed by law. The terms of this Agreement shall continue in effect for all scuba diving training and related activities for a period of one year from the date I signed this agreement. I am over 18 years of age and legally competent to engage in this Agreement, or I have acquired the written consent of my parent or guardian.</p>
+    </div>
   </div>
-
-  <label class="agree-row" id="agreeWaiver1" onclick="toggleAgree('agreeWaiver1','agreeCheck1')">
-    <input type="checkbox" id="agreeCheck1">
-    <div class="cb-box" id="agreeBox1"></div>
-    <span class="agree-text">I have read and understood the Diving Center General Regulations and agree to follow them during my stay. <strong style="color:var(--ssi-red);">*</strong></span>
-  </label>
 
   <label class="agree-row" id="agreeWaiver2" onclick="toggleAgree('agreeWaiver2','agreeCheck2')">
     <input type="checkbox" id="agreeCheck2">
     <div class="cb-box" id="agreeBox2"></div>
-    <span class="agree-text">I have read and understood the Liability Release and Assumption of Risk Agreement and voluntarily accept all terms. I confirm I am of lawful age and legally competent to sign. <strong style="color:var(--ssi-red);">*</strong></span>
+    <span class="agree-text">I have read and understood the Center Regulations and Liability Release. I voluntarily accept all terms. <strong style="color:var(--ssi-red);">*</strong></span>
   </label>
 
-  <label class="agree-row" id="agreeWaiver3" onclick="toggleAgree('agreeWaiver3','agreeCheck3')">
-    <input type="checkbox" id="agreeCheck3">
-    <div class="cb-box" id="agreeBox3"></div>
-    <span class="agree-text">I have read and understood the Standard Safe Diving Practices Statement of Understanding. I recognize these practices are for my own safety and well-being. <strong style="color:var(--ssi-red);">*</strong></span>
-  </label>
+  <!-- ── SIGNATURE STRIP ── -->
+  <div class="sig-strip">
+    <div class="sig-strip-title">Participant Signature</div>
+    <div class="fg fg-2" style="margin-bottom:10px;">
+      <div class="field"><label>Full Name (print) <span class="req">*</span></label><input type="text" id="sigName" placeholder="Your full legal name"></div>
+      <div class="field"><label>Date <span class="req">*</span></label><input type="date" id="sigDate"></div>
+    </div>
+    <div class="sig-wrap">
+      <div class="sig-hdr">
+        <span class="sig-hdr-label">Liability Signature</span>
+        <button class="sig-clear" onclick="clearSig('sigCanvas1','hasSig1')">✕ Clear</button>
+      </div>
+      <canvas class="sig-canvas" id="sigCanvas1"></canvas>
+    </div>
+    <p class="sig-hint">Sign within the box above to confirm acceptance of the Liability Release.</p>
+  </div>
+
+  <!-- ── GUARDIAN SECTION (shown only if minor, first-timer flow last page) ── -->
+  <div id="guardianSection5" style="display:none;">
+    <div class="divider"></div>
+    <div class="sec-title">Parental / Guardian Consent Required</div>
+    <div class="sec-sub">As the participant is under 18 years of age, a parent or legal guardian must sign below.</div>
+    <div class="fg fg-2">
+      <div class="field"><label>Parent / Guardian Full Name <span class="req">*</span></label><input type="text" id="guardianName5" placeholder="Full legal name"></div>
+      <div class="field"><label>Relationship to Diver <span class="req">*</span></label><input type="text" id="guardianRelation5" placeholder="e.g. Mother, Father, Guardian"></div>
+    </div>
+    <div class="sig-wrap">
+      <div class="sig-hdr">
+        <span class="sig-hdr-label">Parent / Guardian Signature</span>
+        <button class="sig-clear" onclick="clearSig('sigCanvas3','hasSig3')">✕ Clear</button>
+      </div>
+      <canvas class="sig-canvas" id="sigCanvas3"></canvas>
+    </div>
+  </div>
 
   <div class="nav-row">
-    <button class="btn btn-back" onclick="goPage(4)">← Back</button>
-    <span class="pg-count">Step 5 of 6</span>
-    <button class="btn btn-next" onclick="goNext(5)">Continue →</button>
+    <button class="btn btn-back" onclick="goBack(5)">← Back</button>
+    <span class="pg-count">Step 5</span>
+    <button class="btn btn-next" id="page5NextBtn" onclick="goNext(5)">Continue →</button>
+    <button class="btn btn-submit" id="page5SubmitBtn" style="display:none;" onclick="submitForm()">Submit Registration ✓</button>
   </div>
 </div>
 
 <!-- ============================================================
-     PAGE 6 — DIGITAL SIGNATURE
+     PAGE 6 — SAFE DIVING PRACTICES (CERTIFIED ONLY)
 ============================================================ -->
 <div class="page" id="page-6">
-  <div class="sec-title">Digital Signature</div>
-  <div class="sec-sub">Sign below to complete your registration. Your signature confirms all information provided is accurate and all waivers are accepted.</div>
+  <div class="sec-title">Safe Diving Practices</div>
+  <div class="sec-sub">Please read carefully before signing</div>
 
-  <div class="field" style="margin-bottom:10px;">
-    <label>Draw Your Signature <span class="req">*</span></label>
+  <div class="waiver-text">
+    <p>This is a statement in which you are informed of the established safe diving practices for skin and scuba diving. These practices have been compiled for your review and acknowledgement and are intended to increase your comfort and safety in diving.</p>
+    <p><strong>Standard Safe Diving Practices Statement of Understanding</strong></p>
+    <p>I understand that as a diver I should:</p>
+    <p><strong>1.</strong> Maintain good mental and physical fitness for diving. Avoid being under the influence of alcohol or dangerous drugs when diving. Keep proficient in diving skills, striving to increase them through continuing education and reviewing them in controlled conditions after a period of diving inactivity.</p>
+    <p><strong>2.</strong> Be familiar with my dive sites. If not, obtain a formal diving orientation from a knowledgeable, local source. If diving conditions are worse than those in which I am experienced, postpone diving or select an alternate site with better conditions. Engage only in diving activities consistent with my training and experience. Do not engage in cave or technical diving unless specifically trained to do so.</p>
+    <p><strong>3.</strong> Use complete, well-maintained, reliable equipment with which I am familiar; and inspect it for correct fit and function prior to each dive. Have a buoyancy control device, low-pressure BCD inflation system, submersible pressure gauge and alternate air source and dive planning/monitoring device when scuba diving. Deny use of my equipment to uncertified divers.</p>
+    <p><strong>4.</strong> Listen carefully to dive briefings and directions and respect the advice of those supervising my diving activities. Recognize that additional training is recommended for participation in specialty diving activities, in other geographic areas and after periods of inactivity that exceed six months.</p>
+    <p><strong>5.</strong> Adhere to the buddy system throughout every dive. Plan dives — including communications, procedures for reuniting in case of separation and emergency procedures — with my buddy.</p>
+    <p><strong>6.</strong> Be proficient in dive planning (dive computer or dive table use). Make all dives no decompression dives and allow a margin of safety. Have a means to monitor depth and time underwater. Limit maximum depth to my level of training and experience. Ascend at a rate of not more than 18 metres/60 feet per minute. Be a SAFE diver — Slowly Ascend From Every dive. Make a safety stop as an added precaution, usually at 5 metres/15 feet for three minutes or longer.</p>
+    <p><strong>7.</strong> Maintain proper buoyancy. Adjust weighting at the surface for neutral buoyancy with no air in my BCD. Maintain neutral buoyancy while underwater. Be buoyant for surface swimming and resting. Have weights clear for easy removal, and establish buoyancy when in distress while diving. Carry at least one surface signaling device (such as signal tube / SMB, whistle, mirror).</p>
+    <p><strong>8.</strong> Breathe properly for diving. Never breath-hold or skip-breathe when breathing compressed air, and avoid excessive hyperventilation when breath-hold diving. Avoid overexertion while in and underwater and dive within my limitations.</p>
+    <p><strong>9.</strong> Use a boat, float or other surface support station, whenever feasible.</p>
+    <p><strong>10.</strong> Know and obey local dive laws and regulations, including fish and game and dive flag laws.</p>
+    <p><strong>I understand the importance and purposes of these established practices. I recognize they are for my own safety and well-being, and that failure to adhere to them can place me in jeopardy when diving.</strong></p>
+    <p>I accept and understand that <strong>OCTOPUS DIVERS DAHAB</strong> will collect the answers of this Safe Diving Practices Agreement in order to check that I can safely participate in scuba diving activities.</p>
   </div>
 
-  <div class="sig-wrap">
-    <div class="sig-hdr">
-      <span class="sig-hdr-label">Signature Pad — Draw with finger or mouse</span>
-      <button class="sig-clear" onclick="clearSig('sigCanvas1','hasSig1')">✕ Clear</button>
+  <label class="agree-row" id="agreeWaiver3" onclick="toggleAgree('agreeWaiver3','agreeCheck3')">
+    <input type="checkbox" id="agreeCheck3">
+    <div class="cb-box" id="agreeBox3"></div>
+    <span class="agree-text">I have read and understood the Safe Diving Practices Statement. I recognize these practices are for my own safety. <strong style="color:var(--ssi-red);">*</strong></span>
+  </label>
+
+  <!-- ── SIGNATURE STRIP ── -->
+  <div class="sig-strip">
+    <div class="sig-strip-title">Participant Signature</div>
+    <div class="fg fg-2" style="margin-bottom:10px;">
+      <div class="field"><label>Full Name (print) <span class="req">*</span></label><input type="text" id="sigNameSafe" placeholder="Your full legal name"></div>
+      <div class="field"><label>Date <span class="req">*</span></label><input type="date" id="sigDateSafe"></div>
     </div>
-    <canvas class="sig-canvas" id="sigCanvas1"></canvas>
-  </div>
-  <p class="sig-hint">Sign within the box above. This represents your primary registration signature.</p>
-
-  <div class="fg fg-2">
-    <div class="field"><label>Full Name (print) <span class="req">*</span></label><input type="text" id="sigName" placeholder="Your full legal name"></div>
-    <div class="field"><label>Date <span class="req">*</span></label><input type="date" id="sigDate"></div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="sec-title">Medical Questionnaire Confirmation</div>
-  <div class="sec-sub">I confirm my answers to the Diver Medical Participant Questionnaire are honest and accurate.</div>
-
-  <div class="sig-wrap">
-    <div class="sig-hdr">
-      <span class="sig-hdr-label">Medical Form Signature</span>
-      <button class="sig-clear" onclick="clearSig('sigCanvas2','hasSig2')">✕ Clear</button>
+    <div class="sig-wrap">
+      <div class="sig-hdr">
+        <span class="sig-hdr-label">Safe Practices Signature</span>
+        <button class="sig-clear" onclick="clearSig('sigCanvas4','hasSig4')">✕ Clear</button>
+      </div>
+      <canvas class="sig-canvas" id="sigCanvas4"></canvas>
     </div>
-    <canvas class="sig-canvas" id="sigCanvas2"></canvas>
+    <p class="sig-hint">Sign within the box above to confirm understanding of the Safe Diving Practices.</p>
   </div>
-  <p class="sig-hint">Sign here to confirm your medical questionnaire responses.</p>
 
-  <div class="notice" style="margin-top:8px;">
-    <strong>Participant Statement:</strong> I have answered all questions honestly, and understand that I accept responsibility for any consequences resulting from any questions I may have answered inaccurately or for my failure to disclose any existing or past health conditions.
+  <!-- ── GUARDIAN SECTION (shown only if minor, certified flow last page) ── -->
+  <div id="guardianSection6" style="display:none;">
+    <div class="divider"></div>
+    <div class="sec-title">Parental / Guardian Consent Required</div>
+    <div class="sec-sub">As the participant is under 18 years of age, a parent or legal guardian must sign below.</div>
+    <div class="fg fg-2">
+      <div class="field"><label>Parent / Guardian Full Name <span class="req">*</span></label><input type="text" id="guardianName6" placeholder="Full legal name"></div>
+      <div class="field"><label>Relationship to Diver <span class="req">*</span></label><input type="text" id="guardianRelation6" placeholder="e.g. Mother, Father, Guardian"></div>
+    </div>
+    <div class="sig-wrap">
+      <div class="sig-hdr">
+        <span class="sig-hdr-label">Parent / Guardian Signature</span>
+        <button class="sig-clear" onclick="clearSig('sigCanvas5','hasSig5')">✕ Clear</button>
+      </div>
+      <canvas class="sig-canvas" id="sigCanvas5"></canvas>
+    </div>
   </div>
 
   <div class="nav-row">
-    <button class="btn btn-back" onclick="goPage(5)">← Back</button>
-    <span class="pg-count">Step 6 of 6</span>
+    <button class="btn btn-back" onclick="goBack(6)">← Back</button>
+    <span class="pg-count">Step 6</span>
     <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">Submit Registration ✓</button>
   </div>
 </div>
@@ -1528,7 +2390,7 @@ canvas.sig-canvas {
 // Replace this URL with your deployed Apps Script URL
 // Instructions in the README below
 // =============================================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXXr9_DFdecr5lV-Jm9DekO9HHocy1t-0Qa8rJp3QVtcZ91ylwOP3APYaf7kL947b1/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwXVuNg_7MYHriv0D-wkrBCy8bG7Sb4aI3KMlh2UWgubLUhwrRQ6wYASnCW3KqFIYxf/exec';
 
 // =============================================
 // CANVAS SIGNATURE PAD
@@ -1630,8 +2492,17 @@ function setMedQ(n, val) {
   const anyBox = Object.entries(qToBox).some(([num, _]) => medAnswers[num] === 'Yes');
   document.getElementById('medBoxesSection').style.display = anyBox ? 'block' : 'none';
 
-  // Check if physician required
-  const needsDoc = [...physicianRequired].some(num => medAnswers[num] === 'Yes');
+  // Q10 → show/hide medication list field
+  if (n === 10) {
+    const wrap = document.getElementById('medicationListWrap');
+    if (wrap) {
+      wrap.style.display = val === 'Yes' ? 'block' : 'none';
+      if (val !== 'Yes') document.getElementById('medicationList').value = '';
+    }
+  }
+
+  // Check if physician required (Q3/Q5/Q10 Yes OR expired med cert)
+  const needsDoc = [...physicianRequired].some(num => medAnswers[num] === 'Yes') || isMedCertExpired();
   document.getElementById('physicianBanner').style.display = needsDoc ? 'block' : 'none';
 }
 
@@ -1696,20 +2567,74 @@ function goPage(n) {
   document.getElementById('page-' + currentPage).classList.remove('active');
   document.getElementById('page-' + n).classList.add('active');
 
-  // Progress steps
+  // Progress steps — hide steps skipped by user type
   for (let i = 1; i <= 6; i++) {
     const s = document.getElementById('ps-' + i);
+    if (isPageSkipped(i)) {
+      s.style.display = 'none';
+      continue;
+    }
+    s.style.display = '';
     s.className = 'prog-step' + (i < n ? ' done' : i === n ? ' active' : '');
   }
 
   currentPage = n;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Init canvases on page 6
-  if (n === 6) {
+  // Show cert upload only for certified users when entering Page 2
+  if (n === 2) {
+    const licWrap = document.getElementById('licCopyWrap');
+    if (licWrap) licWrap.style.display = (window.userType === 'certified') ? '' : 'none';
+  }
+
+  // Re-sync physician banner on entering Page 4 + init medical sig canvas
+  if (n === 4) {
+    checkMedCertExpiry();
+    // Prefill DOB display + default sig date
+    const dob = document.getElementById('birthDate').value;
+    if (dob) document.getElementById('medSignerDob').value = dob;
+    const md = document.getElementById('medSigDate');
+    if (md && !md.value) md.valueAsDate = new Date();
+    setTimeout(() => initCanvas('sigCanvas2'), 100);
+  }
+
+  // Page 5: Liability — pick text variant, init sig, swap Continue/Submit button,
+  //         show guardian if minor + first-timer (last page for them)
+  if (n === 5) {
+    const isCertified = window.userType === 'certified';
+    document.getElementById('liabilityTextIntro').style.display     = isCertified ? 'none'  : '';
+    document.getElementById('liabilityTextCertified').style.display = isCertified ? ''     : 'none';
+
+    document.getElementById('page5NextBtn').style.display   = isCertified ? '' : 'none';
+    document.getElementById('page5SubmitBtn').style.display = isCertified ? 'none' : '';
+
+    const age = ageFromDob(document.getElementById('birthDate').value);
+    const isMinor = age != null && age < 18;
+    // Guardian on Page 5 ONLY for first-timers (their final page)
+    const showGuard5 = !isCertified && isMinor;
+    document.getElementById('guardianSection5').style.display = showGuard5 ? 'block' : 'none';
+
+    const sd = document.getElementById('sigDate');
+    if (sd && !sd.value) sd.valueAsDate = new Date();
+
     setTimeout(() => {
       initCanvas('sigCanvas1');
-      initCanvas('sigCanvas2');
+      if (showGuard5) initCanvas('sigCanvas3');
+    }, 100);
+  }
+
+  // Page 6: Safe Practices (certified only) — init sig, guardian if minor
+  if (n === 6) {
+    const age = ageFromDob(document.getElementById('birthDate').value);
+    const isMinor = age != null && age < 18;
+    document.getElementById('guardianSection6').style.display = isMinor ? 'block' : 'none';
+
+    const sd = document.getElementById('sigDateSafe');
+    if (sd && !sd.value) sd.valueAsDate = new Date();
+
+    setTimeout(() => {
+      initCanvas('sigCanvas4');
+      if (isMinor) initCanvas('sigCanvas5');
     }, 100);
   }
 }
@@ -1727,9 +2652,16 @@ function validatePage(n) {
   let ok = true;
 
   if (n === 1) {
-    ['firstName','lastName','nationality','passportNum','email','mobile',
-     'birthDate','hotel','roomNum','hotelCheckIn','hotelCheckOut','emergName','emergPhone']
+    ['firstName','lastName','gender','birthDate','passportNum','nationality',
+     'homeAddress','country','city','mobile','email','language','discoveredVia',
+     'hotel','roomNum','hotelCheckIn','hotelCheckOut',
+     'emergFirstName','emergLastName','emergRelationship','emergPhone']
     .forEach(id => { if (!val(id)) ok = false; });
+    if (!document.querySelector('input[name="insurance"]:checked')) ok = false;
+    const medCert = document.querySelector('input[name="medCertificate"]:checked');
+    if (!medCert) ok = false;
+    if (medCert && medCert.value === 'Yes' && !val('medCertDate')) ok = false;
+    if (document.querySelector('input[name="insurance"]:checked')?.value === 'Yes' && !val('insuranceDetails')) ok = false;
   }
 
   if (n === 2) {
@@ -1737,12 +2669,19 @@ function validatePage(n) {
       document.getElementById('idArea').style.borderColor = 'var(--error)';
       ok = false;
     }
+    if (window.userType === 'certified' && !document.getElementById('licFile').files.length) {
+      document.getElementById('licArea').style.borderColor = 'var(--error)';
+      ok = false;
+    }
   }
 
   if (n === 3) {
-    ['licNum','certLevel','loggedDives','lastDive','diveOrg'].forEach(id => { if (!val(id)) ok = false; });
-    if (!document.querySelector('input[name="insurance"]:checked')) ok = false;
-    if (!document.querySelector('input[name="checkdive"]:checked')) ok = false;
+    // Only validate Cert & Equipment if certified user (skipped entirely otherwise)
+    if (window.userType === 'certified') {
+      ['licNum','certLevel','loggedDives','lastDive','diveOrg','divingWith']
+        .forEach(id => { if (!val(id)) ok = false; });
+      if (!document.querySelector('input[name="checkdive"]:checked')) ok = false;
+    }
   }
 
   if (n === 4) {
@@ -1755,23 +2694,91 @@ function validatePage(n) {
         document.getElementById('medQ' + i).style.outline = '';
       }
     }
+    // If Q10 = Yes, medication list is required
+    if (medAnswers[10] === 'Yes' && !val('medicationList')) ok = false;
+    // Medical signer + signature required
+    if (!val('medSignerName')) ok = false;
+    if (!val('medSigDate')) ok = false;
+    if (!canvases['sigCanvas2'] || !canvases['sigCanvas2'].hasSig) {
+      alert('Please sign the medical questionnaire.');
+      ok = false;
+    }
   }
 
   if (n === 5) {
-    if (!document.getElementById('agreeCheck1').checked ||
-        !document.getElementById('agreeCheck2').checked ||
-        !document.getElementById('agreeCheck3').checked) {
-      alert('Please check all agreement boxes to continue.');
+    // Liability Release: must agree, sign, name + date
+    if (!document.getElementById('agreeCheck2').checked) {
+      alert('Please check the agreement box to continue.');
       ok = false;
+    }
+    if (!val('sigName')) ok = false;
+    if (!val('sigDate')) ok = false;
+    if (!canvases['sigCanvas1'] || !canvases['sigCanvas1'].hasSig) {
+      alert('Please sign the liability release.');
+      ok = false;
+    }
+    // For first-timers, this is the LAST page → also need guardian if minor
+    if (window.userType !== 'certified') {
+      const age = ageFromDob(document.getElementById('birthDate').value);
+      if (age != null && age < 18) {
+        if (!val('guardianName5') || !val('guardianRelation5')) ok = false;
+        if (!canvases['sigCanvas3'] || !canvases['sigCanvas3'].hasSig) {
+          alert('Parent / guardian signature is required.');
+          ok = false;
+        }
+      }
+    }
+  }
+
+  if (n === 6) {
+    // Safe Diving Practices (certified only): agree, sign, name + date
+    if (!document.getElementById('agreeCheck3').checked) {
+      alert('Please check the agreement box to continue.');
+      ok = false;
+    }
+    if (!val('sigNameSafe')) ok = false;
+    if (!val('sigDateSafe')) ok = false;
+    if (!canvases['sigCanvas4'] || !canvases['sigCanvas4'].hasSig) {
+      alert('Please sign the safe diving practices statement.');
+      ok = false;
+    }
+    const age = ageFromDob(document.getElementById('birthDate').value);
+    if (age != null && age < 18) {
+      if (!val('guardianName6') || !val('guardianRelation6')) ok = false;
+      if (!canvases['sigCanvas5'] || !canvases['sigCanvas5'].hasSig) {
+        alert('Parent / guardian signature is required.');
+        ok = false;
+      }
     }
   }
 
   return ok;
 }
 
+// Map of pages to skip per user type (page-3 = Cert/Equipment, only for certified;
+// page-6 = Safe Diving Practices, only for certified)
+function isPageSkipped(n) {
+  if (window.userType !== 'certified') {
+    if (n === 3) return true;   // first-timers skip Cert/Equipment
+    if (n === 6) return true;   // first-timers skip Safe Diving Practices (built later)
+  }
+  return false;
+}
+
+function nextVisiblePage(from, dir) {
+  let n = from + dir;
+  while (n >= 1 && n <= 6 && isPageSkipped(n)) n += dir;
+  return n;
+}
+
 function goNext(n) {
   if (!validatePage(n)) return;
-  goPage(n + 1);
+  goPage(nextVisiblePage(n, +1));
+}
+
+// Make Back buttons skip-aware too
+function goBack(n) {
+  goPage(nextVisiblePage(n, -1));
 }
 
 // Remove invalid on input
@@ -1783,69 +2790,162 @@ document.querySelectorAll('input, select').forEach(el => {
 document.getElementById('sigDate').valueAsDate = new Date();
 
 // =============================================
+// MEDICAL CERTIFICATE EXPIRY (CDWS rule)
+// Age < 40 → valid 2 years; Age >= 40 → valid 1 year
+// =============================================
+function ageFromDob(dobStr) {
+  if (!dobStr) return null;
+  const dob = new Date(dobStr);
+  if (isNaN(dob.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+  return age;
+}
+
+function isMedCertExpired() {
+  const cert = document.querySelector('input[name="medCertificate"]:checked');
+  if (!cert || cert.value !== 'Yes') return false;
+  const dateStr = document.getElementById('medCertDate').value;
+  if (!dateStr) return false;
+  const age = ageFromDob(document.getElementById('birthDate').value);
+  if (age == null) return false;
+  const issued = new Date(dateStr);
+  if (isNaN(issued.getTime())) return false;
+  const validYears = age < 40 ? 2 : 1;
+  const expiry = new Date(issued);
+  expiry.setFullYear(expiry.getFullYear() + validYears);
+  return new Date() > expiry;
+}
+
+function onMedCertChange() {
+  const cert = document.querySelector('input[name="medCertificate"]:checked');
+  const wrap = document.getElementById('medCertDateWrap');
+  if (cert && cert.value === 'Yes') {
+    wrap.classList.add('show');
+  } else {
+    wrap.classList.remove('show');
+    document.getElementById('medCertDate').value = '';
+  }
+  checkMedCertExpiry();
+}
+
+function toggleInsurance() {
+  const ins = document.querySelector('input[name="insurance"]:checked');
+  const wrap = document.getElementById('insuranceDetailsWrap');
+  if (ins && ins.value === 'Yes') {
+    wrap.classList.add('show');
+  } else {
+    wrap.classList.remove('show');
+    const f = document.getElementById('insuranceDetails');
+    if (f) f.value = '';
+  }
+}
+
+// =============================================
+// COUNTRY + NATIONALITY DROPDOWNS
+// =============================================
+(function populateCountries() {
+  const COUNTRIES = ["Afghanistan","Albania","Algeria","Andorra","Angola","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Ivory Coast","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kosovo","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Mauritania","Mauritius","Mexico","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Lucia","Samoa","San Marino","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe","Other"];
+  ['country','nationality'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    COUNTRIES.forEach(c => {
+      const o = document.createElement('option');
+      o.value = o.textContent = c;
+      sel.appendChild(o);
+    });
+  });
+})();
+
+function checkMedCertExpiry() {
+  document.getElementById('medCertWarning').style.display = isMedCertExpired() ? 'block' : 'none';
+  // Keep physician banner (page 4) in sync if cert expiry changes after med questions answered
+  const banner = document.getElementById('physicianBanner');
+  if (banner) {
+    const needsDoc = [...physicianRequired].some(num => medAnswers[num] === 'Yes') || isMedCertExpired();
+    banner.style.display = needsDoc ? 'block' : 'none';
+  }
+}
+
+// Re-check cert expiry if DOB changes after cert date entered
+document.getElementById('birthDate').addEventListener('change', checkMedCertExpiry);
+
+// =============================================
 // SUBMIT
 // =============================================
 async function submitForm() {
+  const isCertified = window.userType === 'certified';
+  const age = ageFromDob(document.getElementById('birthDate').value);
+  const isMinor = age != null && age < 18;
+
+  // Liability sig (Page 5)
   const sigName = document.getElementById('sigName').value.trim();
   const sigDate = document.getElementById('sigDate').value;
 
-  if (!canvases['sigCanvas1'] || !canvases['sigCanvas1'].hasSig) {
-    alert('Please draw your primary signature.'); return;
-  }
-  if (!canvases['sigCanvas2'] || !canvases['sigCanvas2'].hasSig) {
-    alert('Please draw your medical questionnaire signature.'); return;
-  }
+  // Final-page validation safety net (validatePage already handled most of this)
+  if (!canvases['sigCanvas1'] || !canvases['sigCanvas1'].hasSig) { alert('Liability signature missing.'); return; }
+  if (!canvases['sigCanvas2'] || !canvases['sigCanvas2'].hasSig) { alert('Medical signature missing.'); return; }
+  if (isCertified && (!canvases['sigCanvas4'] || !canvases['sigCanvas4'].hasSig)) { alert('Safe Practices signature missing.'); return; }
   if (!sigName) { document.getElementById('sigName').classList.add('invalid'); return; }
 
-  // Collect specialties
-  const specs = [...document.querySelectorAll('.cb-group input[type="checkbox"]:checked')].map(c => c.value);
-  if (document.getElementById('specOtherText').value) specs.push(document.getElementById('specOtherText').value);
+  // Guardian sig — picks the right canvas depending on which is the LAST page
+  const guardCanvasId = isCertified ? 'sigCanvas5' : 'sigCanvas3';
+  const guardNameId   = isCertified ? 'guardianName6'     : 'guardianName5';
+  const guardRelId    = isCertified ? 'guardianRelation6' : 'guardianRelation5';
+  if (isMinor) {
+    if (!val(guardNameId)) { alert('Parent / guardian name is required.'); return; }
+    if (!val(guardRelId))  { alert('Relationship to diver is required.'); return; }
+    if (!canvases[guardCanvasId] || !canvases[guardCanvasId].hasSig) {
+      alert('Parent / guardian signature is required.'); return;
+    }
+  }
 
-  // Collect med answers
+  // ── Collect specialties (only meaningful for certified) ──
+  const specs = [...document.querySelectorAll('#page-3 .cb-group input[type="checkbox"]:checked')].map(c => c.value);
+  const specOther = document.getElementById('specOtherText');
+  if (specOther && specOther.value) specs.push(specOther.value);
+
+  // ── Collect medical answers ──
   const medStr = Object.entries(medAnswers).map(([k,v]) => `Q${k}:${v}`).join(', ');
 
-  // Capture signatures
-  // Export: white background, red strokes → black (clean for management display)
+  // ── Equipment payload (certified) ──
+  const eqGet = id => document.getElementById(id) ? document.getElementById(id).value : '';
+  const eqCk  = id => document.getElementById(id) ? !!document.getElementById(id).checked : false;
+
+  // ── Canvas → PNG helper ──
   function canvasToCleanPng(canvasId) {
     const src = document.getElementById(canvasId);
+    if (!src) return '';
     const tmp = document.createElement('canvas');
-    tmp.width  = src.width;
-    tmp.height = src.height;
+    tmp.width = src.width; tmp.height = src.height;
     const ctx = tmp.getContext('2d');
-    // White background
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, tmp.width, tmp.height);
-    // Get source pixels and convert red strokes to black
-    const srcCtx  = src.getContext('2d');
+    const srcCtx = src.getContext('2d');
     const imgData = srcCtx.getImageData(0, 0, src.width, src.height);
     const d = imgData.data;
     for (let i = 0; i < d.length; i += 4) {
-      const r = d[i], g = d[i+1], b = d[i+2], a = d[i+3];
-      if (a > 30) {
-        // Any non-transparent pixel becomes black
-        d[i]   = 0;
-        d[i+1] = 0;
-        d[i+2] = 0;
-        d[i+3] = 255;
-      } else {
-        // Transparent → white
-        d[i]   = 255;
-        d[i+1] = 255;
-        d[i+2] = 255;
-        d[i+3] = 255;
-      }
+      const a = d[i+3];
+      if (a > 30) { d[i]=0; d[i+1]=0; d[i+2]=0; d[i+3]=255; }
+      else        { d[i]=255; d[i+1]=255; d[i+2]=255; d[i+3]=255; }
     }
     ctx.putImageData(imgData, 0, 0);
     return tmp.toDataURL('image/png');
   }
-  const sig1 = canvasToCleanPng('sigCanvas1');
-  const sig2 = canvasToCleanPng('sigCanvas2');
 
-  // Read uploaded files as base64
+  const sig1 = canvasToCleanPng('sigCanvas1'); // Liability
+  const sig2 = canvasToCleanPng('sigCanvas2'); // Medical
+  const sig3 = isMinor ? canvasToCleanPng(guardCanvasId) : ''; // Guardian (whichever applies)
+  const sig4 = isCertified ? canvasToCleanPng('sigCanvas4') : ''; // Safe Practices
+
+  // ── File → base64 helper ──
   async function fileToBase64(inputId) {
-    const file = document.getElementById(inputId).files[0];
+    const el = document.getElementById(inputId);
+    const file = el && el.files && el.files[0];
     if (!file) return null;
-    return new Promise((res, rej) => {
+    return new Promise(res => {
       const reader = new FileReader();
       reader.onload = () => res({
         data: reader.result.split(',')[1],
@@ -1862,19 +2962,43 @@ async function submitForm() {
   document.querySelector('.spin-label').textContent = 'Uploading documents…';
 
   const passportFile = await fileToBase64('idFile');
-  const certFile     = await fileToBase64('licFile');
+  const certFile     = isCertified ? await fileToBase64('licFile') : null;
 
-  document.querySelector('.spin-label').textContent = 'Uploading files…';
+  document.querySelector('.spin-label').textContent = 'Capturing audit data…';
+
+  // IP for audit trail (best effort)
+  let ipAddress = '';
+  try {
+    const ipResp = await fetch('https://api.ipify.org?format=json');
+    const ipJson = await ipResp.json();
+    ipAddress = ipJson.ip || '';
+  } catch (e) { ipAddress = ''; }
 
   const data = {
+    // ── meta ──
     timestamp:       new Date().toISOString(),
+    userType:        window.userType || 'intro',
+
+    // ── personal info ──
     firstName:       document.getElementById('firstName').value,
     lastName:        document.getElementById('lastName').value,
-    nationality:     document.getElementById('nationality').value,
-    passportNum:     document.getElementById('passportNum').value,
-    email:           document.getElementById('email').value,
-    mobile:          document.getElementById('mobile').value,
+    gender:          document.getElementById('gender').value,
     birthDate:       document.getElementById('birthDate').value,
+    passportNum:     document.getElementById('passportNum').value,
+    nationality:     document.getElementById('nationality').value,
+    homeAddress:     document.getElementById('homeAddress').value,
+    country:         document.getElementById('country').value,
+    city:            document.getElementById('city').value,
+    mobile:          document.getElementById('mobile').value,
+    email:           document.getElementById('email').value,
+    language:        document.getElementById('language').value,
+    discoveredVia:   document.getElementById('discoveredVia').value,
+    insurance:       document.querySelector('input[name="insurance"]:checked')?.value || '',
+    insuranceDetails:document.getElementById('insuranceDetails')?.value || '',
+    medCertificate:  document.querySelector('input[name="medCertificate"]:checked')?.value || '',
+    medCertDate:     document.getElementById('medCertDate').value || '',
+
+    // ── booking ──
     hotel:           document.getElementById('hotel').value,
     roomNum:         document.getElementById('roomNum').value,
     hotelCheckIn:    document.getElementById('hotelCheckIn').value,
@@ -1882,29 +3006,75 @@ async function submitForm() {
     diveCheckIn:     document.getElementById('diveCheckIn').value,
     diveCheckOut:    document.getElementById('diveCheckOut').value,
     flyBack:         document.getElementById('flyBack').value,
-    emergName:       document.getElementById('emergName').value,
+
+    // ── emergency ──
+    emergFirstName:  document.getElementById('emergFirstName').value,
+    emergLastName:   document.getElementById('emergLastName').value,
+    emergRelationship: document.getElementById('emergRelationship').value,
     emergPhone:      document.getElementById('emergPhone').value,
-    licNum:          document.getElementById('licNum').value,
-    certLevel:       document.getElementById('certLevel').value,
-    loggedDives:     document.getElementById('loggedDives').value,
-    lastDive:        document.getElementById('lastDive').value,
-    diveOrg:         document.getElementById('diveOrg').value,
-    insurance:       document.querySelector('input[name="insurance"]:checked')?.value || '',
+
+    // ── certificate (certified only) ──
+    owInProgress:    eqCk('owInProgress') ? 'Yes' : 'No',
+    diveOrg:         eqGet('diveOrg'),
+    certLevel:       eqGet('certLevel'),
+    licNum:          eqGet('licNum'),
+    loggedDives:     eqGet('loggedDives'),
+    lastDive:        eqGet('lastDive'),
     checkDive:       document.querySelector('input[name="checkdive"]:checked')?.value || '',
     specialties:     specs.join('; '),
+
+    // ── equipment (certified only) ──
+    privateEquipment: eqCk('privateEquipment') ? 'Yes' : 'No',
+    divingWith:      eqGet('divingWith'),
+    eqWetsuitLong:   eqGet('eqWetsuitLong'),
+    eqWetsuitShort:  eqGet('eqWetsuitShort'),
+    eqBcd:           eqGet('eqBcd'),
+    eqFins:          eqGet('eqFins'),
+    eqRegulator:     eqCk('eqRegulator') ? 'Yes' : 'No',
+    eqMask:          eqCk('eqMask')      ? 'Yes' : 'No',
+    eqComputer:      eqCk('eqComputer')  ? 'Yes' : 'No',
+    eqSnorkel:       eqCk('eqSnorkel')   ? 'Yes' : 'No',
+    eqTank15:        eqCk('eqTank15')    ? 'Yes' : 'No',
+    eqTorch:         eqCk('eqTorch')     ? 'Yes' : 'No',
+
+    // ── medical ──
     medicalAnswers:  medStr,
+    medicationList:  medAnswers[10] === 'Yes' ? (document.getElementById('medicationList').value || '') : '',
     boxAnswers:      (function() {
       const entries = Object.entries(boxAnswersMap).map(([k,v]) => k + ':' + v);
       return entries.length ? entries.join(', ') : 'None';
     })(),
-    physicianNeeded: document.getElementById('physicianBanner').style.display !== 'none' ? 'Yes' : 'No',
+    physicianNeeded: (document.getElementById('physicianBanner').style.display !== 'none' || isMedCertExpired()) ? 'Yes' : 'No',
+    medSignerName:   document.getElementById('medSignerName').value,
+    medSigDate:      document.getElementById('medSigDate').value,
+
+    // ── liability sig (Page 5) ──
     signerName:      sigName,
     sigDate:         sigDate,
+
+    // ── safe practices sig (Page 6, certified only) ──
+    safeSignerName:  document.getElementById('sigNameSafe')?.value || '',
+    safeSigDate:     document.getElementById('sigDateSafe')?.value || '',
+
+    // ── signatures ──
     signature1:      sig1,
     signature2:      sig2,
-    // sigs also sent as separate named fields for Drive storage
-    sig1Data:        sig1.split(',')[1],  // base64 only
-    sig2Data:        sig2.split(',')[1],
+    signature3:      sig3,
+    signature4:      sig4,
+    sig1Data:        sig1 ? sig1.split(',')[1] : '',
+    sig2Data:        sig2 ? sig2.split(',')[1] : '',
+    sig3Data:        sig3 ? sig3.split(',')[1] : '',
+    sig4Data:        sig4 ? sig4.split(',')[1] : '',
+
+    // ── minor / guardian ──
+    isMinor:         isMinor,
+    guardianName:    isMinor ? (document.getElementById(guardNameId)?.value || '') : '',
+    guardianRelation:isMinor ? (document.getElementById(guardRelId)?.value  || '') : '',
+
+    // ── audit ──
+    ipAddress:       ipAddress,
+
+    // ── files ──
     passportFile:    passportFile,
     certFile:        certFile,
   };
@@ -2070,8 +3240,26 @@ function mgmtView(idx) {
     </div>`
   ).join('');
 
-  const physBanner = r.physicianNeeded === 'Yes'
-    ? `<div class="phys-banner">⚠ PHYSICIAN EVALUATION REQUIRED — this diver answered YES to a flagged medical question.</div>` : '';
+  // Medical cert expiry check (age-based: <40 → 2yr, ≥40 → 1yr)
+  function mgmtAge(dobStr) {
+    if (!dobStr) return null;
+    const dob = new Date(dobStr); if (isNaN(dob.getTime())) return null;
+    const t = new Date(); let a = t.getFullYear() - dob.getFullYear();
+    const m = t.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && t.getDate() < dob.getDate())) a--;
+    return a;
+  }
+  function mgmtCertExpired(r) {
+    if (r.medCertificate !== 'Yes' || !r.medCertDate) return false;
+    const age = mgmtAge(r.birthDate); if (age == null) return false;
+    const issued = new Date(r.medCertDate); if (isNaN(issued.getTime())) return false;
+    const expiry = new Date(issued); expiry.setFullYear(expiry.getFullYear() + (age < 40 ? 2 : 1));
+    return new Date() > expiry;
+  }
+  const certExpired = mgmtCertExpired(r);
+  const physFlag = r.physicianNeeded === 'Yes' || certExpired;
+  const physBanner = physFlag
+    ? `<div class="phys-banner">⚠ PHYSICIAN EVALUATION REQUIRED — ${certExpired ? 'medical certificate is expired.' : 'this diver answered YES to a flagged medical question.'}</div>` : '';
 
   document.getElementById('modalCard').innerHTML = `
     <div class="modal-top">
@@ -2083,37 +3271,65 @@ function mgmtView(idx) {
 
       <!-- PERSONAL INFO -->
       <div class="modal-section">
-        <div class="modal-sec-title">Personal Information</div>
+        <div class="modal-sec-title">Personal Information ${r.userType ? `· <span style="color:var(--orange);">${r.userType === 'certified' ? 'CERTIFIED DIVER' : 'FIRST TIME / DSD'}</span>` : ''}</div>
         <div class="modal-grid">
           <div class="modal-field"><div class="modal-field-label">Full Name</div><div class="modal-field-value highlight">${fullName}</div></div>
-          <div class="modal-field"><div class="modal-field-label">Nationality</div><div class="modal-field-value">${r.nationality||'—'}</div></div>
-          <div class="modal-field"><div class="modal-field-label">Passport / ID #</div><div class="modal-field-value">${r.passportNum||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Gender</div><div class="modal-field-value">${r.gender||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Date of Birth</div><div class="modal-field-value">${r.birthDate||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Passport / ID #</div><div class="modal-field-value">${r.passportNum||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Nationality</div><div class="modal-field-value">${r.nationality||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Country</div><div class="modal-field-value">${r.country||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">City</div><div class="modal-field-value">${r.city||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Home Address</div><div class="modal-field-value">${r.homeAddress||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Email</div><div class="modal-field-value">${r.email||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Mobile</div><div class="modal-field-value">${r.mobile||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Language</div><div class="modal-field-value">${r.language||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Discovered Via</div><div class="modal-field-value">${r.discoveredVia||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Insurance</div><div class="modal-field-value">${r.insurance||'—'}${r.insuranceDetails ? ' · ' + r.insuranceDetails : ''}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Med Certificate</div><div class="modal-field-value">${r.medCertificate||'—'}${certExpired ? ' <span style="color:#ff8a80;font-weight:700;">(EXPIRED)</span>' : ''}${r.medCertDate ? ' · ' + r.medCertDate : ''}</div></div>
           <div class="modal-field"><div class="modal-field-label">Hotel</div><div class="modal-field-value">${r.hotel||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Room #</div><div class="modal-field-value">${r.roomNum||'—'}</div></div>
-          <div class="modal-field"><div class="modal-field-label">Check In</div><div class="modal-field-value">${r.hotelCheckIn||'—'}</div></div>
-          <div class="modal-field"><div class="modal-field-label">Check Out</div><div class="modal-field-value">${r.hotelCheckOut||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Arrival</div><div class="modal-field-value">${r.hotelCheckIn||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Departure</div><div class="modal-field-value">${r.hotelCheckOut||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Fly Back</div><div class="modal-field-value">${r.flyBack||'—'}</div></div>
-          <div class="modal-field"><div class="modal-field-label">Emergency Contact</div><div class="modal-field-value">${r.emergName||'—'} · ${r.emergPhone||''}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Emergency Contact</div><div class="modal-field-value">${(r.emergFirstName||'')} ${(r.emergLastName||'')}${r.emergRelationship ? ' (' + r.emergRelationship + ')' : ''} · ${r.emergPhone||''}</div></div>
         </div>
       </div>
 
-      <!-- DIVING INFO -->
+      <!-- DIVING / CERT INFO (certified only) -->
+      ${r.userType === 'certified' ? `
       <div class="modal-section">
-        <div class="modal-sec-title">Diving Information</div>
+        <div class="modal-sec-title">Certification</div>
         <div class="modal-grid">
-          <div class="modal-field"><div class="modal-field-label">License #</div><div class="modal-field-value">${r.licNum||'—'}</div></div>
-          <div class="modal-field"><div class="modal-field-label">Cert Level</div><div class="modal-field-value highlight">${r.certLevel||'—'}</div></div>
-          <div class="modal-field"><div class="modal-field-label">Organisation</div><div class="modal-field-value">${r.diveOrg||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">OW Student In Progress</div><div class="modal-field-value">${r.owInProgress||'No'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Association</div><div class="modal-field-value">${r.diveOrg||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Level</div><div class="modal-field-value highlight">${r.certLevel||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Certificate #</div><div class="modal-field-value">${r.licNum||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Logged Dives</div><div class="modal-field-value">${r.loggedDives||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Last Dive</div><div class="modal-field-value">${r.lastDive||'—'}</div></div>
-          <div class="modal-field"><div class="modal-field-label">Insurance</div><div class="modal-field-value">${r.insurance||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Check Dive</div><div class="modal-field-value">${r.checkDive||'—'}</div></div>
           <div class="modal-field"><div class="modal-field-label">Specialties</div><div class="modal-field-value">${r.specialties||'None'}</div></div>
         </div>
       </div>
+
+      <!-- EQUIPMENT -->
+      <div class="modal-section">
+        <div class="modal-sec-title">Equipment</div>
+        <div class="modal-grid">
+          <div class="modal-field"><div class="modal-field-label">Private Equipment</div><div class="modal-field-value">${r.privateEquipment||'No'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Diving With</div><div class="modal-field-value">${r.divingWith||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Wetsuit Long</div><div class="modal-field-value">${r.eqWetsuitLong||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Wetsuit Short</div><div class="modal-field-value">${r.eqWetsuitShort||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">BCD</div><div class="modal-field-value">${r.eqBcd||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Fins</div><div class="modal-field-value">${r.eqFins||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Regulator</div><div class="modal-field-value">${r.eqRegulator||'No'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Mask</div><div class="modal-field-value">${r.eqMask||'No'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Dive Computer</div><div class="modal-field-value">${r.eqComputer||'No'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Snorkel</div><div class="modal-field-value">${r.eqSnorkel||'No'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Tank 15L</div><div class="modal-field-value">${r.eqTank15||'No'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Torch</div><div class="modal-field-value">${r.eqTorch||'No'}</div></div>
+        </div>
+      </div>` : ''}
 
       <!-- MEDICAL -->
       <div class="modal-section">
@@ -2121,6 +3337,7 @@ function mgmtView(idx) {
         ${physBanner}
         <div class="med-grid">${medHtml}</div>
         ${r.boxAnswers && r.boxAnswers !== 'None' ? `<div style="margin-top:10px;font-size:12px;color:var(--muted);padding:10px 14px;background:var(--charcoal-3);border-radius:6px;"><strong style="color:var(--white);letter-spacing:1px;">BOX DETAILS:</strong> ${r.boxAnswers}</div>` : ''}
+        ${r.medicationList ? `<div style="margin-top:10px;font-size:12px;color:var(--muted);padding:10px 14px;background:var(--charcoal-3);border-radius:6px;"><strong style="color:var(--white);letter-spacing:1px;">MEDICATIONS:</strong> ${r.medicationList}</div>` : ''}
       </div>
 
       <!-- WAIVERS & AGREEMENTS -->
@@ -2149,30 +3366,57 @@ function mgmtView(idx) {
       <!-- SIGNATURES -->
       <div class="modal-section">
         <div class="modal-sec-title">Signatures</div>
-        <div style="margin-bottom:8px;font-size:12px;color:var(--muted);">Signed by: <strong style="color:var(--white);">${r.signerName||fullName}</strong> · ${r.sigDate||'—'}</div>
+        <div style="margin-bottom:8px;font-size:12px;color:var(--muted);">Signed by: <strong style="color:var(--white);">${r.signerName||fullName}</strong></div>
         <div class="sig-row">
           <div class="sig-card">
-            <div class="sig-card-label" style="color:#666;">Primary Signature (Registration)</div>
-            ${r.signature1
-              ? `<a href="${r.signature1}" target="_blank"><img src="${r.signature1.replace('open?id=','uc?export=view&id=').replace('/view','/preview')}" alt="Signature" onerror="this.parentNode.innerHTML='<a href=\\''+this.src+'\\' target=\\'_blank\\' style=\\'color:#1e6cb5;font-size:12px;\\'>View Signature →</a>'"></a>`
-              : '<div style="color:#aaa;font-size:12px;padding:20px;">Not captured</div>'}
-          </div>
-          <div class="sig-card">
-            <div class="sig-card-label" style="color:#666;">Medical Questionnaire Signature</div>
+            <div class="sig-card-label" style="color:#666;">Medical Questionnaire ${r.medSigDate ? '· ' + r.medSigDate : ''}</div>
             ${r.signature2
               ? `<a href="${r.signature2}" target="_blank"><img src="${r.signature2.replace('open?id=','uc?export=view&id=').replace('/view','/preview')}" alt="Signature" onerror="this.parentNode.innerHTML='<a href=\\''+this.src+'\\' target=\\'_blank\\' style=\\'color:#1e6cb5;font-size:12px;\\'>View Signature →</a>'"></a>`
               : '<div style="color:#aaa;font-size:12px;padding:20px;">Not captured</div>'}
           </div>
+          <div class="sig-card">
+            <div class="sig-card-label" style="color:#666;">Liability Release ${r.sigDate ? '· ' + r.sigDate : ''}</div>
+            ${r.signature1
+              ? `<a href="${r.signature1}" target="_blank"><img src="${r.signature1.replace('open?id=','uc?export=view&id=').replace('/view','/preview')}" alt="Signature" onerror="this.parentNode.innerHTML='<a href=\\''+this.src+'\\' target=\\'_blank\\' style=\\'color:#1e6cb5;font-size:12px;\\'>View Signature →</a>'"></a>`
+              : '<div style="color:#aaa;font-size:12px;padding:20px;">Not captured</div>'}
+          </div>
+          ${r.userType === 'certified' ? `
+          <div class="sig-card">
+            <div class="sig-card-label" style="color:#666;">Safe Practices ${r.safeSigDate ? '· ' + r.safeSigDate : ''}</div>
+            ${r.signature4
+              ? `<a href="${r.signature4}" target="_blank"><img src="${r.signature4.replace('open?id=','uc?export=view&id=').replace('/view','/preview')}" alt="Signature" onerror="this.parentNode.innerHTML='<a href=\\''+this.src+'\\' target=\\'_blank\\' style=\\'color:#1e6cb5;font-size:12px;\\'>View Signature →</a>'"></a>`
+              : '<div style="color:#aaa;font-size:12px;padding:20px;">Not captured</div>'}
+          </div>` : ''}
         </div>
       </div>
 
-      <!-- DOCUMENTS -->
-      ${(r.passportLink || r.certLink) ? `
+      <!-- MINOR / GUARDIAN -->
+      ${(r.isMinor === 'Yes' || r.isMinor === true || String(r.isMinor).toLowerCase() === 'true') ? `
       <div class="modal-section">
-        <div class="modal-sec-title">Uploaded Documents</div>
+        <div class="modal-sec-title">Minor / Guardian</div>
         <div class="modal-grid">
+          <div class="modal-field"><div class="modal-field-label">Guardian Name</div><div class="modal-field-value highlight">${r.guardianName||'—'}</div></div>
+          <div class="modal-field"><div class="modal-field-label">Relationship</div><div class="modal-field-value">${r.guardianRelation||'—'}</div></div>
+        </div>
+        <div class="sig-row" style="margin-top:10px;">
+          <div class="sig-card">
+            <div class="sig-card-label" style="color:#666;">Parent / Guardian Signature</div>
+            ${r.guardianSig
+              ? `<a href="${r.guardianSig}" target="_blank"><img src="${r.guardianSig.replace('open?id=','uc?export=view&id=').replace('/view','/preview')}" alt="Guardian Signature" onerror="this.parentNode.innerHTML='<a href=\\''+this.src+'\\' target=\\'_blank\\' style=\\'color:#1e6cb5;font-size:12px;\\'>View Signature →</a>'"></a>`
+              : '<div style="color:#aaa;font-size:12px;padding:20px;">Not captured</div>'}
+          </div>
+        </div>
+      </div>` : ''}
+
+      <!-- DOCUMENTS -->
+      ${(r.passportLink || r.certLink || r.pdfLink || r.ipAddress) ? `
+      <div class="modal-section">
+        <div class="modal-sec-title">Documents &amp; Audit</div>
+        <div class="modal-grid">
+          ${r.pdfLink ? `<div class="modal-field"><div class="modal-field-label">📄 Filled PDF (printable)</div><a href="${r.pdfLink}" target="_blank" style="color:var(--orange);font-weight:600;font-size:13px;">View / Print →</a></div>` : ''}
           ${r.passportLink ? `<div class="modal-field"><div class="modal-field-label">Passport / ID</div><a href="${r.passportLink}" target="_blank" style="color:var(--blue-lt);font-size:13px;">View in Drive →</a></div>` : ''}
           ${r.certLink ? `<div class="modal-field"><div class="modal-field-label">Dive Certificate</div><a href="${r.certLink}" target="_blank" style="color:var(--blue-lt);font-size:13px;">View in Drive →</a></div>` : ''}
+          ${r.ipAddress ? `<div class="modal-field"><div class="modal-field-label">IP Address</div><div class="modal-field-value" style="font-family:monospace;font-size:12px;">${r.ipAddress}</div></div>` : ''}
         </div>
       </div>` : ''}
 
@@ -2190,6 +3434,80 @@ function mgmtCloseModal() {
 document.getElementById('mgmtModal').addEventListener('click', function(e) {
   if (e.target === this) mgmtCloseModal();
 });
+
+// =============================================
+// SPLASH SCREEN — route to first-time vs certified
+// =============================================
+window.userType = null;   // 'intro' | 'certified'
+
+(function initSplash() {
+  // Copy the real header logo into the splash if available
+  const headerImg = document.querySelector('.logo-badge img');
+  const splashLogo = document.getElementById('splashLogo');
+  if (headerImg && splashLogo) {
+    splashLogo.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = headerImg.src;
+    img.alt = 'Octopus Divers';
+    splashLogo.appendChild(img);
+  }
+  // Lock scroll while splash is up
+  document.body.style.overflow = 'hidden';
+})();
+
+function startForm(type) {
+  window.userType = type;
+  const splash = document.getElementById('splashScreen');
+  splash.classList.add('fading');
+  setTimeout(() => {
+    splash.style.display = 'none';
+    document.body.style.overflow = '';
+    // Tag the form area with the user type for conditional styling/fields
+    document.body.setAttribute('data-user-type', type);
+    // Smooth scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 500);
+}
+
+// =============================================
+// REVIEWS SIDE PANEL — rotation & collapse
+// =============================================
+(function() {
+  const stage = document.getElementById('rpStage');
+  if (!stage) return;
+  const slides = stage.querySelectorAll('.rp-slide');
+  const dotsWrap = document.getElementById('rpDots');
+  let idx = 0;
+  let timer = null;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'rp-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => { show(i); restart(); });
+    dotsWrap.appendChild(d);
+  });
+  const dots = dotsWrap.querySelectorAll('.rp-dot');
+
+  function show(i) {
+    slides[idx].classList.remove('active');
+    dots[idx].classList.remove('active');
+    idx = (i + slides.length) % slides.length;
+    slides[idx].classList.add('active');
+    dots[idx].classList.add('active');
+  }
+  function next() { show(idx + 1); }
+  function start() { timer = setInterval(next, 9000); }
+  function restart() { clearInterval(timer); start(); }
+  start();
+})();
+
+function toggleReviewsPanel() {
+  const p = document.getElementById('reviewsPanel');
+  const btn = document.getElementById('rpCollapse');
+  p.classList.toggle('collapsed');
+  btn.textContent = p.classList.contains('collapsed') ? '+' : '−';
+}
 </script>
 
 <!--
